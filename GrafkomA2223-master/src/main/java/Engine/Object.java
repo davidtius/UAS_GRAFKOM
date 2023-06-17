@@ -23,6 +23,7 @@ public class Object extends ShaderProgram{
     UniformsMap uniformsMap;
     Vector4f color;
 
+    List<Vector3f> verticesColor;
     Matrix4f model;
 
     int vboColor;
@@ -48,14 +49,15 @@ public class Object extends ShaderProgram{
         this.centerPoint = centerPoint;
     }
 
-    List<Vector3f> verticesColor;
     public Object(List<ShaderModuleData> shaderModuleDataList
             , List<Vector3f> vertices
             , Vector4f color) {
         super(shaderModuleDataList);
+//        System.out.println("tes");
         this.vertices = vertices;
 //        setupVAOVBO();
         uniformsMap = new UniformsMap(getProgramId());
+//        uniformsMap = new UniformsMap(getProgramId());
 //        uniformsMap.createUniform(
 //                "uni_color");
 //        uniformsMap.createUniform(
@@ -73,7 +75,11 @@ public class Object extends ShaderProgram{
         super(shaderModuleDataList);
         this.vertices = vertices;
         this.verticesColor = verticesColor;
-        setupVAOVBOWithVerticesColor();
+        uniformsMap = new UniformsMap(getProgramId());
+        model = new Matrix4f().identity();
+        childObject = new ArrayList<>();
+        centerPoint = Arrays.asList(0f,0f,0f);
+//        setupVAOVBOWithVerticesColor();
     }
     public void setupVAOVBO(){
         //set vao
@@ -125,8 +131,14 @@ public class Object extends ShaderProgram{
                 0, 0);
 
     }
-    public void drawSetupWithVerticesColor(){
+    public void drawSetupWithVerticesColor(Camera camera, Projection projection){
         bind();
+        uniformsMap.setUniform(
+                "model", model);
+        uniformsMap.setUniform(
+                "view", camera.getViewMatrix());
+        uniformsMap.setUniform(
+                "projection", projection.getProjMatrix());
         // Bind VBO
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -163,8 +175,8 @@ public class Object extends ShaderProgram{
             child.draw(camera, projection);
         }
     }
-    public void drawWithVerticesColor(){
-        drawSetupWithVerticesColor();
+    public void drawWithVerticesColor(Camera camera, Projection projection){
+        drawSetupWithVerticesColor(camera, projection);
         // Draw the vertices
         //optional
         glLineWidth(10); //ketebalan garis

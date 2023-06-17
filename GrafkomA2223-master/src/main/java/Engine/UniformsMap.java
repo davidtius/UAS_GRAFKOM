@@ -13,11 +13,13 @@ public class UniformsMap {
     private final Map<String, Integer> uniforms;
 
     public UniformsMap(int programId) {
+
         uniforms = new HashMap<>();
 
         int uniformCount = glGetProgrami(programId, GL_ACTIVE_UNIFORMS);
-
+        System.out.println("tes");
         try (MemoryStack stack = stackPush()) {
+
             IntBuffer tempBuffer = stack.mallocInt(1);
             for (int i = 0; i < uniformCount; i++) {
                 String key = glGetActiveUniform(programId, i, glGetProgrami(programId, GL_ACTIVE_UNIFORM_MAX_LENGTH), tempBuffer, tempBuffer);

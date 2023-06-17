@@ -13,8 +13,14 @@ public class Model {
     public List<Vector2f> textures = new ArrayList<>();
     public List<Vector2f> lineTextures = new ArrayList<>();
     public List<Face> faces = new ArrayList<>();
-
     public Model(){
 
+    }
+    public void getSize() {
+        System.out.println(vertices.size());
+        System.out.println(normals.size());
+        System.out.println(textures.size());
+        System.out.println(lineTextures.size());
+        System.out.println(faces.size());
     }
 }

@@ -1,7 +1,10 @@
 package Engine;
 
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
@@ -16,14 +19,21 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class Sphere extends Circle{
     float radiusZ;
     int stackCount;
     int sectorCount;
     List<Vector3f> normal;
+    List<Vector3f> textures = new ArrayList<>();
     float angle;
     int nbo;
+    int nboColor;
+    int textCoords;
+    Model m;
+    List<Material> material;
 
     public Sphere(String type, List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, Vector4f color, List<Float> centerPoint, Float radiusX, Float radiusY, Float radiusZ,
                   int sectorCount,int stackCount, float angle) {
@@ -55,6 +65,7 @@ public class Sphere extends Circle{
     public Sphere(String type, List<ShaderModuleData> shaderModuleDataList, List<Vector3f> vertices, List<Vector3f> color, List<Float> centerPoint, Float radiusX, Float radiusY, Float radiusZ,
                   int sectorCount,int stackCount, float angle) {
         super(shaderModuleDataList, vertices, color, centerPoint, radiusX, radiusY);
+
         this.radiusZ = radiusZ;
         this.stackCount = stackCount;
         this.sectorCount = sectorCount;
@@ -76,20 +87,16 @@ public class Sphere extends Circle{
             case "button" : button();break;
             case "Blend" : loadObject();break;
         }
-        setupVAOVBO();
+        setupVAOVBOWithVerticesColor();
     }
     public void loadObject() {
-        System.out.println("Code done");
         vertices.clear();
         Vector3f temp = new Vector3f();
         ArrayList<Vector3f> tempVertices = new ArrayList<>();
 
-        Model m = null;
-        List<Material> mtl = null;
-
         try {
-            m = ObjLoader.loadModel(new File("C:\\Users\\nicos\\Documents\\Kuliah\\Semester 4\\UAS_GRAFKOM\\GrafkomA2223-master\\src\\main\\java\\amongus.obj"));
-            mtl = ObjLoader.loadMTLFile("C:\\Users\\nicos\\Documents\\Kuliah\\Semester 4\\UAS_GRAFKOM\\GrafkomA2223-master\\src\\main\\java\\amongus.mtl");
+            m = ObjLoader.loadModel(new File("C:\\Users\\nicos\\Downloads\\uploads_files_2761675_Tantive+iv+interior.obj"));
+            material = ObjLoader.loadMTLFile("C:\\Users\\nicos\\Downloads\\uploads_files_2761675_Tantive+iv+interior.mtl");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,18 +107,26 @@ public class Sphere extends Circle{
             normal.add(n1);
             Vector3f v1 = m.vertices.get((int) face.vertex.x-1);
             vertices.add(v1);
+//            Vector3f t1 = new Vector3f(m.textures.get((int) face.texture.x-1), 0f);
+//            textures.add(t1);
+            verticesColor.add(face.color);
 
             Vector3f n2 = m.normals.get((int) face.normal.y-1);
             normal.add(n2);
             Vector3f v2 = m.vertices.get((int) face.vertex.y-1);
             vertices.add(v2);
+//            Vector3f t2 = new Vector3f(m.textures.get((int) face.texture.y-1), 0f);
+//            textures.add(t2);
+            verticesColor.add(face.color);
 
             Vector3f n3 = m.normals.get((int) face.normal.z-1);
             normal.add(n3);
             Vector3f v3 = m.vertices.get((int) face.vertex.z-1);
             vertices.add(v3);
+//            Vector3f t3 = new Vector3f(m.textures.get((int) face.texture.z-1), 0f);
+//            textures.add(t3);
+            verticesColor.add(face.color);
         }
-
     }
     public void setupVAOVBO() {
         super.setupVAOVBO();
@@ -120,11 +135,30 @@ public class Sphere extends Circle{
         glBufferData(GL_ARRAY_BUFFER,
                 Utils.listoFloat(normal),
                 GL_STATIC_DRAW);
-
-//        uniformsMap.createUniform("lightColor");
-//        uniformsMap.createUniform("lightPos");
-
     }
+
+    public void setupVAOVBOWithVerticesColor(){
+        super.setupVAOVBOWithVerticesColor();
+        nbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, nbo);
+        glBufferData(GL_ARRAY_BUFFER,
+                Utils.listoFloat(normal),
+                GL_STATIC_DRAW);
+
+//        textCoords = glGenBuffers();
+//        glBindBuffer(GL_ARRAY_BUFFER, textCoords);
+//        glBufferData(GL_ARRAY_BUFFER,
+//                Utils.listoFloat(textures),
+//                GL_STATIC_DRAW);
+
+        //set nboColor
+        nboColor = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, nboColor);
+        glBufferData(GL_ARRAY_BUFFER,
+                Utils.listoFloat(verticesColor),
+                GL_STATIC_DRAW);
+    }
+
     public void drawSetup(Camera camera, Projection projection){
         super.drawSetup(camera,projection);
         glEnableVertexAttribArray(1);
@@ -136,11 +170,96 @@ public class Sphere extends Circle{
         //directional Light
         uniformsMap.setUniform("lightColor",new Vector3f(1.0f,1.0f,0.0f));
         uniformsMap.setUniform("lightPos",new Vector3f(1.0f,1.0f,0.0f));
-
         uniformsMap.setUniform("viewPos",camera.getPosition());
     }
 
+    public void drawSetupWithVerticesColor(Camera camera, Projection projection){
+        super.drawSetupWithVerticesColor(camera, projection);
 
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, nboColor);
+        glVertexAttribPointer(1, 3,
+                GL_FLOAT,
+                false,
+                0, 0);
+
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, nbo);
+        glVertexAttribPointer(2, 3,
+                GL_FLOAT,
+                false,
+                0, 0);
+
+//        glEnableVertexAttribArray(3);
+//        glBindBuffer(GL_ARRAY_BUFFER, textCoords);
+//        glVertexAttribPointer(3, 3,
+//                GL_FLOAT,
+//                false,
+//                0, 0);
+
+        uniformsMap.setUniform("lightColor",new Vector3f(1.0f,1.0f,1.0f));
+        uniformsMap.setUniform("lightPos",new Vector3f(1.0f,1.0f,0.0f));
+        uniformsMap.setUniform("viewPos",camera.getPosition());
+
+        for (Material material : material) {
+            if (material.getMapKsPath() != null) {
+                try {
+                    Texture mapKs = new Texture(material.getMapKsPath());
+//                    System.out.println(mapKs.getWidth());
+                    // Bind and activate the texture using OpenGL
+                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKs.getTextureId());
+                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKs.getTextureId());
+                    // Set additional texture parameters if needed
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (material.getMapNsPath() != null) {
+                try {
+                    Texture mapNs = new Texture(material.getMapNsPath());
+                    // Bind and activate the texture using OpenGL
+                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapNs.getTextureId());
+                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapNs.getTextureId());
+                    // Set additional texture parameters if needed
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (material.getMapReflPath() != null) {
+                try {
+                    Texture mapRefl = new Texture(material.getMapReflPath());
+                    // Bind and activate the texture using OpenGL
+                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapRefl.getTextureId());
+                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapRefl.getTextureId());
+                    // Set additional texture parameters if needed
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (material.getMapBumpPath() != null) {
+                try {
+                    Texture mapBump = new Texture(material.getMapBumpPath());
+                    // Bind and activate the texture using OpenGL
+                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapBump.getTextureId());
+                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapBump.getTextureId());
+                    // Set additional texture parameters if needed
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Render the object using OpenGL commands
+            // ...
+//            GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
+//            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.getTextureId());
+            // Unbind the textures after rendering
+//            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        }
+
+    }
     public void knife(){
         float x = centerPoint.get(0);
         float y = centerPoint.get(1);

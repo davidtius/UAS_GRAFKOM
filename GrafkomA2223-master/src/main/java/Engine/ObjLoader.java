@@ -2,6 +2,7 @@ package Engine;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ import java.util.Map;
 
 public class ObjLoader {
     public static  Model loadModel(File f) throws FileNotFoundException, IOException {
+        List<Material> materials = loadMTLFile("C:\\Users\\nicos\\Documents\\Kuliah\\Semester 4\\UAS_GRAFKOM\\GrafkomA2223-master\\src\\main\\java\\amongus.mtl");
+        Material currentMaterial = materials.get(0);
+
         BufferedReader reader = new BufferedReader(new FileReader(f));
         Model m = new Model();
         String line;
@@ -58,7 +62,13 @@ public class ObjLoader {
                                 Float.parseFloat(line.split("\\s+")[2].split("/")[2]), // Y
                                 Float.parseFloat(line.split("\\s+")[3].split("/")[2])  // Z
                         );
-                m.faces.add(new Face(vertexIndices, normalIndices));
+                Vector3f textureIndices = new Vector3f
+                        (
+                                Float.parseFloat(line.split("\\s+")[1].split("/")[1]), // X
+                                Float.parseFloat(line.split("\\s+")[2].split("/")[1]), // Y
+                                Float.parseFloat(line.split("\\s+")[3].split("/")[1])  // Z
+                        );
+                m.faces.add(new Face(vertexIndices, normalIndices, textureIndices, currentMaterial.getDiffuseColor()));
             }
             else if(line.startsWith("l "))
             {
@@ -66,9 +76,19 @@ public class ObjLoader {
                 float y = Float.parseFloat(line.split("\\s+")[2]);
                 m.lineTextures.add(new Vector2f(x, y));
             }
+            else if(line.startsWith("usemtl ")) {
+                String temp = line.substring(7).trim();
+
+                for (Material mat : materials) {
+                    if (mat.getName().equals(temp)) {
+                        currentMaterial = mat;
+                        System.out.println(currentMaterial.getName());
+                        break;
+                    }
+                }
+            }
         }
         reader.close();
-        loadMTLFile("C:\\Users\\nicos\\Documents\\Kuliah\\Semester 4\\UAS_GRAFKOM\\GrafkomA2223-master\\src\\main\\java\\amongus.mtl");
         return m;
     }
 
@@ -95,8 +115,6 @@ public class ObjLoader {
                     currentMaterial.setName(tokens[1]);
                     currentMaterial.setAmbientColor(new Vector3f(1f, 1f, 1f));
                     materials.add(currentMaterial);
-                } else if (tokens[0].equals("Ka")) {
-                    // Ambient color (ignore or handle as per your needs)
                 } else if (tokens[0].equals("Kd")) {
                     // Diffuse color
                     float r = Float.parseFloat(tokens[1]);
@@ -110,6 +128,15 @@ public class ObjLoader {
                     float b = Float.parseFloat(tokens[3]);
                     currentMaterial.setSpecularColor(new Vector3f(r, g, b));
                 }
+                else if (tokens[0].equals("map_Ks")) {
+                    currentMaterial.setMapKsPath(tokens[1]);
+                } else if (tokens[0].equals("map_Ns")) {
+                    currentMaterial.setMapNsPath(tokens[1]);
+                } else if (tokens[0].equals("map_Refl")) {
+                    currentMaterial.setMapReflPath(tokens[1]);
+                } else if (tokens[0].equals("map_Bump") || tokens[0].equals("bump")) {
+                    currentMaterial.setMapBumpPath(tokens[3]);
+                }
                 // Handle other material properties such as textures, shininess, etc.
             }
         } catch (IOException e) {
@@ -117,7 +144,7 @@ public class ObjLoader {
         }
 
         for (Material material : materials) {
-            material.print();
+            System.out.println(material.getName());;
         }
         return materials;
     }

@@ -32,6 +32,7 @@ public class Main {
     boolean isVenting = false;
     Object ventSrc, ventDest;
     float move = .02f;
+
     public void init(){
         window.init();
         GL.createCapabilities();
@@ -39,8 +40,8 @@ public class Main {
         camera.setPosition(0, 0.25f, 1.7f);
 //        camera.setRotation((float) Math.toRadians(0f), (float) Math.toRadians(30f));
         objects.add(new Sphere("Blend",Arrays.asList(
-                new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
-                new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                new ShaderProgram.ShaderModuleData("resources/shaders/sceneWithVerticesColor.vert", GL_VERTEX_SHADER),
+                new ShaderProgram.ShaderModuleData("resources/shaders/sceneWithVerticesColor.frag", GL_FRAGMENT_SHADER)
         ),
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -52,8 +53,8 @@ public class Main {
                 180,
                 180f
         ));
-
-        objects.get(0).rotateObject((float) Math.toRadians(180f), 0.0f, 1f, 0f);
+        objects.get(0).rotateObject((float) Math.toRadians(180f), 0f, 1f, 0f);
+//        objects.get(0).rotateObject((float) Math.toRadians(180f), 0.0f, 1f, 0f);
 
 //BADAN
 //        objects.add(new Sphere("body",
@@ -917,8 +918,8 @@ public class Main {
         if (objectPeluru.size()== 0) {
             objectPeluru.add(new Sphere("sphere",
                     Arrays.asList(
-                            new ShaderProgram.ShaderModuleData("resources/shaders/scene.vert", GL_VERTEX_SHADER),
-                            new ShaderProgram.ShaderModuleData("resources/shaders/scene.frag", GL_FRAGMENT_SHADER)
+                            new ShaderProgram.ShaderModuleData("resources/shaders/sceneWithVerticesColor.vert", GL_VERTEX_SHADER),
+                            new ShaderProgram.ShaderModuleData("resources/shaders/sceneWithVerticesColor.frag", GL_FRAGMENT_SHADER)
                     ),
                     new ArrayList<>(),
                     new Vector4f(1.0f,.0f,0.0f,1.0f),
@@ -1143,11 +1144,11 @@ public class Main {
 //                if (!collideTable(x + 0.1f, y, z)) move_right();
             }
 
-            if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
-                camera.moveUp(move);
-            }
+//            if (window.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) {
+//                camera.moveUp(move);
+//            }
             if (window.isKeyPressed(GLFW_KEY_RIGHT_SHIFT)) {
-                camera.moveDown(move);
+                camera.moveUp(move);
             }
             if (window.isKeyPressed(GLFW_KEY_G)) {
                 float tempx = camera.getPosition().x;
@@ -1603,8 +1604,8 @@ public class Main {
     public void loop(){
         while (window.isOpen()) {
             window.update();
-            glClearColor(0.0f,
-                    0.0f, 0.0f,
+            glClearColor(1.0f,
+                    1.0f, 1.0f,
                     0.0f);
             GL.createCapabilities();
             float x1 = objects.get(0).getCenterPoint().get(0);
@@ -1615,7 +1616,7 @@ public class Main {
 
             //code
             for(Object object: objects){
-                object.draw(camera, projection);
+                object.drawWithVerticesColor(camera, projection);
             }
 
 
