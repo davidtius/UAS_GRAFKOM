@@ -29,6 +29,7 @@ public class Object extends ShaderProgram{
 
     List<Object> childObject;
     List<Float> centerPoint;
+    float angle;
 
     public List<Object> getChildObject() {
         return childObject;
@@ -59,10 +60,8 @@ public class Object extends ShaderProgram{
 //                "uni_color");
 //        uniformsMap.createUniform(
 //                "model");
-//        uniformsMap.createUniform(
-//                "projection");
-//        uniformsMap.createUniform(
-//                "view");
+//        uniformsMap.createUniform("projection");
+//        uniformsMap.createUniform("view");
         this.color = color;
         model = new Matrix4f().identity();
         childObject = new ArrayList<>();
@@ -161,7 +160,7 @@ public class Object extends ShaderProgram{
                 0,
                 vertices.size());
         for(Object child:childObject){
-            child.draw(camera,projection);
+            child.draw(camera, projection);
         }
     }
     public void drawWithVerticesColor(){
@@ -181,16 +180,19 @@ public class Object extends ShaderProgram{
                 0,
                 vertices.size());
     }
-//    public void drawLine(){
-//        drawSetup();
-//        // Draw the vertices
-//        //optional
-//        glLineWidth(1); //ketebalan garis
-//        glPointSize(1); //besar kecil vertex
-//        glDrawArrays(GL_LINE_STRIP,
-//                0,
-//                vertices.size());
-//    }
+    public Vector3f getVertices(int index) {
+        return this.vertices.get(index);
+    }
+    public void drawLine(Camera camera, Projection projection){
+        drawSetup(camera, projection);
+        // Draw the vertices
+        //optional
+        glLineWidth(3); //ketebalan garis
+        glPointSize(3); //besar kecil vertex
+        glDrawArrays(GL_LINE_STRIP,
+                0,
+                vertices.size());
+    }
     public void addVertices(Vector3f newVertices){
         vertices.add(newVertices);
         setupVAOVBO();
@@ -216,13 +218,33 @@ public class Object extends ShaderProgram{
         centerPoint.set(0,destTemp.x);
         centerPoint.set(1,destTemp.y);
         centerPoint.set(2,destTemp.z);
-        System.out.println(centerPoint.get(0) + " " + centerPoint.get(1));
+//        System.out.println(centerPoint.get(0));
     }
-    public void scaleObject(Float scaleX,Float scaleY,Float scaleZ){
-        model = new Matrix4f().scale(scaleX,scaleY,scaleZ).mul(new Matrix4f(model));
-        for(Object child:childObject){
-            child.translateObject(scaleX,scaleY,scaleZ);
+
+    // Buat ganti arah objek pake WASD
+    public void setAngle(float angle) {
+
+        if (getAngle() != angle) {
+            Vector3f prevCenter = new Vector3f(centerPoint.get(0), centerPoint.get(1), centerPoint.get(2));
+            translateObject(-centerPoint.get(0), -centerPoint.get(1), -centerPoint.get(2));
+            rotateObject((float) Math.toRadians(angle - getAngle()), 0.0f, 1.0f, 0.0f);
+            translateObject(prevCenter.x, prevCenter.y, prevCenter.z);
+
+            this.angle = angle;
+            for (Object child : childObject)
+                child.angle = angle;
         }
     }
 
+    public float getAngle() {
+        return this.angle;
+    }
+
+    public void scaleObject(Float scaleX,Float scaleY,Float scaleZ){
+        model = new Matrix4f().scale(scaleX,scaleY,scaleZ).mul(new Matrix4f(model));
+        updateCenterPoint();
+        for(Object child:childObject){
+            child.scaleObject(scaleX,scaleY,scaleZ);
+        }
+    }
 }
