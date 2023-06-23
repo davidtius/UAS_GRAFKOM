@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ObjLoader {
     public static  Model loadModel(File f) throws FileNotFoundException, IOException {
-        List<Material> materials = loadMTLFile("C:\\Users\\nicos\\Documents\\Kuliah\\Semester 4\\UAS_GRAFKOM\\GrafkomA2223-master\\src\\main\\java\\amongus.mtl");
+        List<Material> materials = loadMTLFile("src/main/java/Engine/map.mtl");
         Material currentMaterial = materials.get(0);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
@@ -49,7 +49,6 @@ public class ObjLoader {
             }
             else if(line.startsWith("f "))
             {
-
                 Vector3f vertexIndices = new Vector3f
                         (
                                 Float.parseFloat(line.split("\\s+")[1].split("/")[0]), // X
@@ -82,7 +81,6 @@ public class ObjLoader {
                 for (Material mat : materials) {
                     if (mat.getName().equals(temp)) {
                         currentMaterial = mat;
-                        System.out.println(currentMaterial.getName());
                         break;
                     }
                 }
@@ -112,6 +110,7 @@ public class ObjLoader {
                 if (tokens[0].equals("newmtl")) {
                     // Start of a new material
                     currentMaterial = new Material();
+//                    System.out.println(currentMaterial);
                     currentMaterial.setName(tokens[1]);
                     currentMaterial.setAmbientColor(new Vector3f(1f, 1f, 1f));
                     materials.add(currentMaterial);
@@ -120,32 +119,43 @@ public class ObjLoader {
                     float r = Float.parseFloat(tokens[1]);
                     float g = Float.parseFloat(tokens[2]);
                     float b = Float.parseFloat(tokens[3]);
+//                    System.out.println(new Vector3f(r, g, b));
                     currentMaterial.setDiffuseColor(new Vector3f(r, g, b));
                 } else if (tokens[0].equals("Ks")) {
                     // Specular color
                     float r = Float.parseFloat(tokens[1]);
                     float g = Float.parseFloat(tokens[2]);
                     float b = Float.parseFloat(tokens[3]);
+//                    System.out.println(new Vector3f(r, g, b));
                     currentMaterial.setSpecularColor(new Vector3f(r, g, b));
                 }
-                else if (tokens[0].equals("map_Ks")) {
-                    currentMaterial.setMapKsPath(tokens[1]);
-                } else if (tokens[0].equals("map_Ns")) {
-                    currentMaterial.setMapNsPath(tokens[1]);
-                } else if (tokens[0].equals("map_Refl")) {
-                    currentMaterial.setMapReflPath(tokens[1]);
-                } else if (tokens[0].equals("map_Bump") || tokens[0].equals("bump")) {
-                    currentMaterial.setMapBumpPath(tokens[3]);
-                }
+//                else if (tokens[0].equals("map_Kd")) {
+//                    currentMaterial.setDiffuseMapPath(tokens[1]);
+//                }
+//                else if (tokens[0].equals("map_Ke")) {
+//                    currentMaterial.setEmissiveMapPath(tokens[1]);
+//                }
+//                else if (tokens[0].equals("map_d")) {
+//                    currentMaterial.setOpacityMapPath(tokens[1]);
+//                }
+//                else if (tokens[0].equals("map_Ks")) {
+//                    currentMaterial.setMapKsPath(tokens[1]);
+//                } else if (tokens[0].equals("map_Ns")) {
+//                    currentMaterial.setMapNsPath(tokens[1]);
+//                } else if (tokens[0].equals("map_Refl")) {
+//                    currentMaterial.setMapReflPath(tokens[1]);
+//                } else if (tokens[0].equals("map_Bump") || tokens[0].equals("bump")) {
+//                    currentMaterial.setMapBumpPath(tokens[3]);
+//                }
                 // Handle other material properties such as textures, shininess, etc.
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        for (Material material : materials) {
-            System.out.println(material.getName());;
-        }
+//        for (Material material : materials) {
+//            System.out.println(material.getName());;
+//        }
         return materials;
     }
 

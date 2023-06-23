@@ -18,6 +18,7 @@ public class Utils {
     }
 
     public static float[] listoFloat(List<Vector3f> arraylist){
+//        System.out.println(arraylist);
         float[] arr = new float[arraylist.size()*3];
         int index = 0;
         for(int i = 0;i<arraylist.size();i++){

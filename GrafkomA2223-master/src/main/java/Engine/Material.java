@@ -7,10 +7,13 @@ public class Material {
     private Vector3f ambientColor;
     private Vector3f diffuseColor;
     private Vector3f specularColor;
-    private String mapKsPath; // Path to the specular color map
-    private String mapNsPath; // Path to the specular exponent map
-    private String mapReflPath; // Path to the reflection map
-    private String mapBumpPath;
+//    private String mapKsPath; // Path to the specular color map
+//    private String mapNsPath; // Path to the specular exponent map
+//    private String mapReflPath; // Path to the reflection map
+//    private String mapBumpPath;
+//    private String diffuseMapPath; // Diffuse map file path
+//    private String opacityMapPath; // Opacity map file path
+//    private String emissiveMapPath; // Emissive map file path
 
 //    public Material(String name) {
 //        this.name = name;
@@ -48,42 +51,66 @@ public class Material {
         return specularColor;
     }
 
-    public String getMapKsPath() {
-        return mapKsPath;
-    }
-
-    public void setMapKsPath(String mapKsPath) {
-        this.mapKsPath = mapKsPath;
-    }
-
-    public String getMapNsPath() {
-        return mapNsPath;
-    }
-
-    public void setMapNsPath(String mapNsPath) {
-        this.mapNsPath = mapNsPath;
-    }
-
-    public String getMapReflPath() {
-        return mapReflPath;
-    }
-
-    public void setMapReflPath(String mapReflPath) {
-        this.mapReflPath = mapReflPath;
-    }
-
-    public String getMapBumpPath() {
-        return mapBumpPath;
-    }
-
-    public void setMapBumpPath(String mapBumpPath) {
-        this.mapBumpPath = mapBumpPath;
-    }
-
-//    public void print() {
-//        System.out.println(name);
-//        System.out.println(ambientColor);
-//        System.out.println(diffuseColor);
-//        System.out.println(specularColor);
+//    public String getDiffuseMapPath() {
+//        return diffuseMapPath;
 //    }
+//
+//    public void setDiffuseMapPath(String diffuseMapPath) {
+//        this.diffuseMapPath = diffuseMapPath;
+//    }
+//
+//    public String getOpacityMapPath() {
+//        return opacityMapPath;
+//    }
+//
+//    public void setOpacityMapPath(String opacityMapPath) {
+//        this.opacityMapPath = opacityMapPath;
+//    }
+//
+//    public String getEmissiveMapPath() {
+//        return emissiveMapPath;
+//    }
+//
+//    public void setEmissiveMapPath(String emissiveMapPath) {
+//        this.emissiveMapPath = emissiveMapPath;
+//    }
+//
+//    public String getMapKsPath() {
+//        return mapKsPath;
+//    }
+//
+//    public void setMapKsPath(String mapKsPath) {
+//        this.mapKsPath = mapKsPath;
+//    }
+//
+//    public String getMapNsPath() {
+//        return mapNsPath;
+//    }
+//
+//    public void setMapNsPath(String mapNsPath) {
+//        this.mapNsPath = mapNsPath;
+//    }
+//
+//    public String getMapReflPath() {
+//        return mapReflPath;
+//    }
+//
+//    public void setMapReflPath(String mapReflPath) {
+//        this.mapReflPath = mapReflPath;
+//    }
+//
+//    public String getMapBumpPath() {
+//        return mapBumpPath;
+//    }
+//
+//    public void setMapBumpPath(String mapBumpPath) {
+//        this.mapBumpPath = mapBumpPath;
+//    }
+
+    public void print() {
+        System.out.println(name);
+        System.out.println(ambientColor);
+        System.out.println(diffuseColor);
+        System.out.println(specularColor);
+    }
 }

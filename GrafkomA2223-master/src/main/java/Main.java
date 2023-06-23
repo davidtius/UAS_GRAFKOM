@@ -53,7 +53,7 @@ public class Main {
                 180,
                 180f
         ));
-        objects.get(0).rotateObject((float) Math.toRadians(180f), 0f, 1f, 0f);
+//        objects.get(0).rotateObject((float) Math.toRadians(180f), 0f, 1f, 0f);
 //        objects.get(0).rotateObject((float) Math.toRadians(180f), 0.0f, 1f, 0f);
 
 //BADAN
@@ -1604,8 +1604,8 @@ public class Main {
     public void loop(){
         while (window.isOpen()) {
             window.update();
-            glClearColor(1.0f,
-                    1.0f, 1.0f,
+            glClearColor(0.0f,
+                    0.0f, 0.0f,
                     0.0f);
             GL.createCapabilities();
             float x1 = objects.get(0).getCenterPoint().get(0);

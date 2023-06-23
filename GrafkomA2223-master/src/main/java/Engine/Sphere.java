@@ -1,12 +1,10 @@
 package Engine;
 
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,12 +12,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_POLYGON;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class Sphere extends Circle{
@@ -91,16 +87,17 @@ public class Sphere extends Circle{
     }
     public void loadObject() {
         vertices.clear();
-        Vector3f temp = new Vector3f();
-        ArrayList<Vector3f> tempVertices = new ArrayList<>();
+//        Vector3f temp = new Vector3f();
+//        ArrayList<Vector3f> tempVertices = new ArrayList<>();
 
         try {
-            m = ObjLoader.loadModel(new File("C:\\Users\\nicos\\Downloads\\uploads_files_2761675_Tantive+iv+interior.obj"));
-            material = ObjLoader.loadMTLFile("C:\\Users\\nicos\\Downloads\\uploads_files_2761675_Tantive+iv+interior.mtl");
+            m = ObjLoader.loadModel(new File("src/main/java/Engine/map.obj"));
+            material = ObjLoader.loadMTLFile("src/main/java/Engine/map.mtl");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        m.getSize();
         normal = new ArrayList<>();
         for(Face face : m.faces){
             Vector3f n1 = m.normals.get((int) face.normal.x-1);
@@ -127,6 +124,111 @@ public class Sphere extends Circle{
 //            textures.add(t3);
             verticesColor.add(face.color);
         }
+
+//        System.out.println(verticesColor);
+
+//        for (Material material : material) {
+//            if (material.getDiffuseMapPath() != null) {
+//                try {
+//                    Texture mapKd = new Texture(material.getDiffuseMapPath());
+////                    System.out.println();
+//                    System.out.println(mapKd.getWidth());
+//                    // Bind and activate the texture using OpenGL
+//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKd.getTextureId());
+//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKd.getTextureId());
+//                    // Set additional texture parameters if needed
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            if (material.getEmissiveMapPath() != null) {
+//                try {
+//                    Texture mapKe = new Texture(material.getEmissiveMapPath());
+////                    System.out.println();
+//                    System.out.println(mapKe.getWidth());
+//                    // Bind and activate the texture using OpenGL
+//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKe.getTextureId());
+//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKe.getTextureId());
+//                    // Set additional texture parameters if needed
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            if (material.getOpacityMapPath() != null) {
+//                try {
+//                    Texture mapd = new Texture(material.getOpacityMapPath());
+////                    System.out.println();
+//                    System.out.println(mapd.getWidth());
+//                    // Bind and activate the texture using OpenGL
+//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapd.getTextureId());
+//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapd.getTextureId());
+//                    // Set additional texture parameters if needed
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            if (material.getMapKsPath() != null) {
+//                try {
+//                    Texture mapKs = new Texture(material.getMapKsPath());
+////                    System.out.println();
+//                    System.out.println(mapKs.getWidth());
+//                    // Bind and activate the texture using OpenGL
+//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKs.getTextureId());
+//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKs.getTextureId());
+//                    // Set additional texture parameters if needed
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            if (material.getMapNsPath() != null) {
+//                try {
+//                    Texture mapNs = new Texture(material.getMapNsPath());
+//                    // Bind and activate the texture using OpenGL
+//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapNs.getTextureId());
+//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapNs.getTextureId());
+//                    // Set additional texture parameters if needed
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            if (material.getMapReflPath() != null) {
+//                try {
+//                    Texture mapRefl = new Texture(material.getMapReflPath());
+//                    // Bind and activate the texture using OpenGL
+//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapRefl.getTextureId());
+//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapRefl.getTextureId());
+//                    // Set additional texture parameters if needed
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            if (material.getMapBumpPath() != null) {
+//                try {
+//                    Texture mapBump = new Texture(material.getMapBumpPath());
+//                    // Bind and activate the texture using OpenGL
+//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapBump.getTextureId());
+//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapBump.getTextureId());
+//                    // Set additional texture parameters if needed
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            // Render the object using OpenGL commands
+//            // ...
+////            GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
+////            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.getTextureId());
+////             Unbind the textures after rendering
+////            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+//        }
+
+
     }
     public void setupVAOVBO() {
         super.setupVAOVBO();
@@ -200,65 +302,6 @@ public class Sphere extends Circle{
         uniformsMap.setUniform("lightColor",new Vector3f(1.0f,1.0f,1.0f));
         uniformsMap.setUniform("lightPos",new Vector3f(1.0f,1.0f,0.0f));
         uniformsMap.setUniform("viewPos",camera.getPosition());
-
-        for (Material material : material) {
-            if (material.getMapKsPath() != null) {
-                try {
-                    Texture mapKs = new Texture(material.getMapKsPath());
-//                    System.out.println(mapKs.getWidth());
-                    // Bind and activate the texture using OpenGL
-                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKs.getTextureId());
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKs.getTextureId());
-                    // Set additional texture parameters if needed
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (material.getMapNsPath() != null) {
-                try {
-                    Texture mapNs = new Texture(material.getMapNsPath());
-                    // Bind and activate the texture using OpenGL
-                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapNs.getTextureId());
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapNs.getTextureId());
-                    // Set additional texture parameters if needed
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (material.getMapReflPath() != null) {
-                try {
-                    Texture mapRefl = new Texture(material.getMapReflPath());
-                    // Bind and activate the texture using OpenGL
-                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapRefl.getTextureId());
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapRefl.getTextureId());
-                    // Set additional texture parameters if needed
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if (material.getMapBumpPath() != null) {
-                try {
-                    Texture mapBump = new Texture(material.getMapBumpPath());
-                    // Bind and activate the texture using OpenGL
-                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapBump.getTextureId());
-                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapBump.getTextureId());
-                    // Set additional texture parameters if needed
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Render the object using OpenGL commands
-            // ...
-//            GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
-//            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.getTextureId());
-            // Unbind the textures after rendering
-//            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-        }
-
     }
     public void knife(){
         float x = centerPoint.get(0);
