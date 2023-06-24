@@ -242,35 +242,35 @@ public class Sphere extends Circle{
                     new Vector3f(-10.55f, 0.25f, 0.57f),
 
                     // hall kiri
-                    new Vector3f(-9.75f, 0.25f, 1.05f),
-                    new Vector3f(-9.75f, 0.25f, 2.15f),
-                    new Vector3f(-9.75f, 0.25f, 3.6f),
-                    new Vector3f(-9.75f, 0.25f, 4.75f),
-                    new Vector3f(-9.75f, 0.25f, 5.8f),
-                    new Vector3f(-9.75f, 0.25f, 6.75f),
+                    // new Vector3f(-9.75f, 0.25f, 1.05f),
+                    // new Vector3f(-9.75f, 0.25f, 2.15f),
+                    // new Vector3f(-9.75f, 0.25f, 3.6f),
+                    // new Vector3f(-9.75f, 0.25f, 4.75f),
+                    // new Vector3f(-9.75f, 0.25f, 5.8f),
+                    // new Vector3f(-9.75f, 0.25f, 6.75f),
 
-                    new Vector3f(-9.3f, 0.25f, 1.05f),
-                    new Vector3f(-9.3f, 0.25f, 2.15f),
-                    new Vector3f(-9.3f, 0.25f, 3.6f),
-                    new Vector3f(-9.3f, 0.25f, 4.75f),
-                    new Vector3f(-8.5f, 0.25f, 5.55f),
+                    // new Vector3f(-9.3f, 0.25f, 1.05f),
+                    // new Vector3f(-9.3f, 0.25f, 2.15f),
+                    // new Vector3f(-9.3f, 0.25f, 3.6f),
+                    // new Vector3f(-9.3f, 0.25f, 4.75f),
+                    // new Vector3f(-8.5f, 0.25f, 5.55f),
 
                     // hall bawah
-                    new Vector3f(-9.3f, 0.25f, 7f),
-                    new Vector3f(-8.5f, 0.25f, 7f),
-                    new Vector3f(-7.75f, 0.25f, 7f),
-                    new Vector3f(-7.45f, 0.25f, 6.25f),
-                    new Vector3f(-6.5f, 0.25f, 6.5f),
-                    new Vector3f(-6.5f, 0.25f, 7.5f),
-                    new Vector3f(-7.05f, 0.25f, 7.6f),
-                    new Vector3f(-7.05f, 0.25f, 8.65f),
+                    // new Vector3f(-9.3f, 0.25f, 7f),
+                    // new Vector3f(-8.5f, 0.25f, 7f),
+                    // new Vector3f(-7.75f, 0.25f, 7f),
+                    // new Vector3f(-7.45f, 0.25f, 6.25f),
+                    // new Vector3f(-6.5f, 0.25f, 6.5f),
+                    // new Vector3f(-6.5f, 0.25f, 7.5f),
+                    // new Vector3f(-7.05f, 0.25f, 7.6f),
+                    // new Vector3f(-7.05f, 0.25f, 8.65f),
 
-                    new Vector3f(-6.35f, 0.25f, 8.9f),
-                    new Vector3f(-5.1f, 0.25f, 8.9f),
-                    new Vector3f(-3.55f, 0.25f, 8.9f),
-                    new Vector3f(-6f, 0.25f, 7.9f),
-                    new Vector3f(-4.5f, 0.25f, 7.9f),
-                    new Vector3f(-2.85f, 0.25f, 7.9f),
+                    // new Vector3f(-6.35f, 0.25f, 8.9f),
+                    // new Vector3f(-5.1f, 0.25f, 8.9f),
+                    // new Vector3f(-3.55f, 0.25f, 8.9f),
+                    // new Vector3f(-6f, 0.25f, 7.9f),
+                    // new Vector3f(-4.5f, 0.25f, 7.9f),
+                    // new Vector3f(-2.85f, 0.25f, 7.9f),
 
                     // storage room
                     new Vector3f(-2.1f, 0.25f, 9.6f),
@@ -294,8 +294,8 @@ public class Sphere extends Circle{
             };
 
             Vector3f[] monitorLights = {
-                    new Vector3f(-7.3f, 0.3f, 1.25f),
-                    new Vector3f(0.010217f, 0.041753f, 0.800000f),
+                    // new Vector3f(-7.3f, 0.3f, 1.25f),
+                    // new Vector3f(0.010217f, 0.041753f, 0.800000f),
                     new Vector3f(-3.15f, 0.25f, 2.15f),
                     new Vector3f(0.355600f, 0.800000f, 0.424038f),
             };
@@ -318,13 +318,13 @@ public class Sphere extends Circle{
             }
 
             for (int i = 0; i < monitorLights.length; i+=2) {
-                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].position", monitorLights[i]);
-                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].ambient", new Vector3f(-0.5f, -0.5f, -0.5f));
-                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].diffuse", monitorLights[i+1]);
-                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].specular", new Vector3f(1f, 1f, 1f));
-                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].constant", 1.0f);
-                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].linear", 0.7f);
-                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].quadratic", 1.8f);
+                uniformsMap.setUniform("pointLights[" + (i/2+29) + "].position", monitorLights[i]);
+                uniformsMap.setUniform("pointLights[" + (i/2+29) + "].ambient", new Vector3f(-0.5f, -0.5f, -0.5f));
+                uniformsMap.setUniform("pointLights[" + (i/2+29) + "].diffuse", monitorLights[i+1]);
+                uniformsMap.setUniform("pointLights[" + (i/2+29) + "].specular", new Vector3f(1f, 1f, 1f));
+                uniformsMap.setUniform("pointLights[" + (i/2+29) + "].constant", 1.0f);
+                uniformsMap.setUniform("pointLights[" + (i/2+29) + "].linear", 0.7f);
+                uniformsMap.setUniform("pointLights[" + (i/2+29) + "].quadratic", 1.8f);
             }
             // no spotlight
             uniformsMap.setUniform("spotLight.position", camera.getPosition());

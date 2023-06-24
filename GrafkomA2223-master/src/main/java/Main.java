@@ -3,6 +3,7 @@ import Engine.Object;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.joml.Matrix4f;
@@ -13,10 +14,12 @@ import java.util.List;
 
 //import static org.lwjgl.util.glu.GLU.*;
 import static org.lwjgl.glfw.GLFW.*;
+
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Main {
+
     private Window window =
             new Window
                     (1840,1020,"Hello World");
@@ -30,7 +33,7 @@ public class Main {
     String legDirection = "front";
     int countDegree = 0;
     boolean blackout = false;
-    float move = .02f;
+    float move = .05f;
     double lastPressed = 0;
     // Vector3f ambientStrength = new Vector3f(0.5f, 0.5f, 0.5f);
 
@@ -54,13 +57,7 @@ public class Main {
                 180f
         ));
 
-        List<Vector3f> temp = new ArrayList<>(objects.get(0).getAllVertices());
-         for (int i = 0; i < temp.size(); i++){
-             if (temp.get(i).get(1) < 0f){
-                 temp.remove(i);
-             }
-         }
-         this.brute = new ArrayList<>(temp);
+         this.brute = new ArrayList<>(objects.get(0).getAllVertices());
 
         objects.add(new Sphere("player",Arrays.asList(
                 new ShaderProgram.ShaderModuleData("resources/shaders/shaderBaru.vert", GL_VERTEX_SHADER),
@@ -78,7 +75,7 @@ public class Main {
         ));
         objects.get(1).translateObject(0f, -0.57f, 0f);
         objects.get(1).scaleObject(0.17f, 0.17f, 0.17f);
-        camera.setPosition(0, objects.get(1).getCenterPoint().get(1)+0.4f, objects.get(1).getCenterPoint().get(2)+0.5f);
+        camera.setPosition(0, objects.get(1).getCenterPoint().get(1)+0.3f, objects.get(1).getCenterPoint().get(2)+0.5f);
     }
 
     List<Vector3f> brute;
@@ -107,45 +104,53 @@ public class Main {
 //    }
 
     boolean collision_detection(float posx, float posy, float posz){
-
-//        for(int i = 0; i < this.brute.size(); i++){
-//
-//            if (v3R(this.brute.get(i).get(0), this.brute.get(i).get(1), this.brute.get(i).get(2), posx, posy, posz) < 0.08f) {
-//                return true;
-//            }
+//        if (camera.getPosition().get(0) >= -4.7f && camera.getPosition().get(0) <= -4f && camera.getPosition().get(2) >= -0.45f && camera.getPosition().get(2) <= -0.4f){
+//            return true;
 //        }
-//
+        for(int i = 0; i < this.brute.size(); i++){
+            if (this.brute.get(i).get(1) < 0f){
+                continue;
+            }
+
+            if (v3R(this.brute.get(i).get(0), this.brute.get(i).get(1), this.brute.get(i).get(2), posx + 0.1f, posy + 0.1f, posz + 0.1f) < 0.5f) {
+                return true;
+            }
+        }
+
         return false;
     }
+
+
         public void input(float x, float y, float z) {
 //        if (mouseInput.isLeftButtonPressed()) {
 //            shoot();
 //        }
             Vector2f displayVec = window.getMouseInput().getDisplVec();
+            camera.addRotation((float) Math.toRadians(0f), (float)Math.toRadians(displayVec.y * 0.5));
+//
+//            float ox = objects.get(1).getCenterPoint().get(0);
+//            float oy = objects.get(1).getCenterPoint().get(1);
+//            float oz = objects.get(1).getCenterPoint().get(2);
+//            float cx = camera.getPosition().x;
+//            float cy = camera.getPosition().y;
+//            float cz = camera.getPosition().z;
+//
+//            // rotate object
+//            objects.get(1).translateObject(-ox, -oy, -oz);
+//            objects.get(1).rotateObject(-1*(float)Math.toRadians(displayVec.y * 0.25f), 0f,1f, 0f );
+//            objects.get(1).translateObject(ox, oy, oz);
 
-            float ox = objects.get(1).getCenterPoint().get(0);
-            float oy = objects.get(1).getCenterPoint().get(1);
-            float oz = objects.get(1).getCenterPoint().get(2);
-            float cx = camera.getPosition().x;
-            float cy = camera.getPosition().y;
-            float cz = camera.getPosition().z;
-
-            // rotate object
-            objects.get(1).translateObject(-ox, -oy, -oz);
-            objects.get(1).rotateObject(-1*(float)Math.toRadians(displayVec.y * 0.25f), 0f,1f, 0f );
-            objects.get(1).translateObject(ox, oy, oz);
-
-             ox = objects.get(1).getCenterPoint().get(0);
-             oy = objects.get(1).getCenterPoint().get(1);
-             oz = objects.get(1).getCenterPoint().get(2);
+//             ox = objects.get(1).getCenterPoint().get(0);
+//             oy = objects.get(1).getCenterPoint().get(1);
+//             oz = objects.get(1).getCenterPoint().get(2);
 
             //  System.out.println(objects.get(1).getCenterPoint());
             // rotate camera
             // camera.translateCddddddddddddddamera(-cx, -cy, -cz);
             // glLoadIdentity();
-            glPushMatrix();
-            camera.getViewMatrix().lookAt(new Vector3f(cx, 0.25f, cz), new Vector3f(ox, oy, oz), new Vector3f(0, 1, 0));
-            glPopMatrix();
+//            glPushMatrix();
+//            camera.getViewMatrix().lookAt(new Vector3f(cx, 0.25f, cz), new Vector3f(ox, oy, oz), new Vector3f(0, 1, 0));
+//            glPopMatrix();
             // Set up the view transformation
             // glLoadMatrixf(camera.getViewMatrix().get(new float[16]));
 
@@ -176,38 +181,6 @@ public class Main {
             // if (blackout)
             // if window.isKeyReleased()
             // blackout = !blackout;
-        }
-
-        if (window.isKeyPressed(GLFW_KEY_M)) {
-            boolean boxOpen = false;
-            boolean buttonPressed = false;
-            if (!boxOpen) {
-
-                while (!openVent(objects.get(2).getChildObject().get(9), new Vector3f(1.15f, -0.05f, -1.15f))) {
-
-                    openVent(objects.get(2).getChildObject().get(9), new Vector3f(1.15f, -0.05f, -1.15f));
-
-                }
-                boxOpen = true;
-            }
-
-            if (boxOpen) {
-                objects.get(2).getChildObject().get(8).translateObject(0f, -0.01f, 0f);
-                buttonPressed = true;
-            }
-
-            if (buttonPressed) {
-                while (!closeVent(objects.get(2).getChildObject().get(9), new Vector3f(1.15f, -0.05f, -1.15f),0.15f)) {
-
-                    closeVent(objects.get(2).getChildObject().get(9), new Vector3f(1.15f, -0.05f, -1.15f),0.15f);
-                }
-                objects.get(2).getChildObject().get(8).translateObject(0f, 0.01f, 0f);
-                buttonPressed = false;
-            }
-
-
-
-
         }
 
 //        if (window.isKeyPressed(GLFW_KEY_K)) {
@@ -287,35 +260,44 @@ public class Main {
             float posy = camera.getPosition().get(1);
             float posz = camera.getPosition().get(2);
 
-            if (window.isKeyPressed(GLFW_KEY_W) && !scanning && (z > -2.3f) && !collision_detection(posx, posy, posz-0.05f)) {
+            if (window.getMouseInput().isLeftButtonPressed()){
+                System.out.println("x: " + camera.getPosition().get(0) + "\ny: " + camera.getPosition().get(1) + "\nz: " + camera.getPosition().get(2));
+                System.out.println();
+            }
+
+            if (window.isKeyPressed(GLFW_KEY_W) && !scanning && (z > -2.3f) && !collision_detection(posx, posy, posz-0.1f)) {
 //                objects.get(0).setAngle(180f);
-                camera.translateCamera(0f, 0f, -move);
-                objects.get(1).translateObject(0f, 0f, -1*move);
+//                camera.translateCamera(0f, 0f, -move);
+//                objects.get(1).translateObject(0f, 0f, -1*move);
+                camera.moveForward(move);
 //                if (!collideTable(x, y, z - 0.1f)) move_forward();
             }
 
 
-            if (window.isKeyPressed(GLFW_KEY_S) && !scanning  && (z < 2.3f) && !collision_detection(posx, posy, posz+0.05f)) {
+            if (window.isKeyPressed(GLFW_KEY_S) && !scanning  && (z < 2.3f) && !collision_detection(posx, posy, posz+0.1f)) {
 //                objects.get(0).setAngle(0f);
-                camera.translateCamera(0f, 0f, move);
+//                camera.translateCamera(0f, 0f, move);
+                camera.moveBackwards(move);
 //                if (!collideTable(x, y, z + 0.1f)) move_backward();
-                objects.get(1).translateObject(0f, 0f, move);
+//                objects.get(1).translateObject(0f, 0f, move);
             }
 
 
-            if (window.isKeyPressed(GLFW_KEY_A) && !scanning  && (x > -2.3f) && !collision_detection(posx-0.05f, posy, posz)) {
+            if (window.isKeyPressed(GLFW_KEY_A) && !scanning  && (x > -2.3f) && !collision_detection(posx-0.1f, posy, posz)) {
 //                objects.get(0).setAngle(270);
-                camera.translateCamera(-move, 0f, 0f);
+//                camera.translateCamera(-move, 0f, 0f);
+                camera.moveLeft(move);
 //                if (!collideTable(x - 0.1f, y, z)) move_left();
-                objects.get(1).translateObject(-1*move, 0f, 0f);
+//                objects.get(1).translateObject(-1*move, 0f, 0f);
             }
 
 
-            if (window.isKeyPressed(GLFW_KEY_D) && !scanning  && (x < 2.3f) && !collision_detection(posx + 0.05f, posy, posz)) {
+            if (window.isKeyPressed(GLFW_KEY_D) && !scanning  && (x < 2.3f) && !collision_detection(posx + 0.1f, posy, posz)) {
 //                objects.get(0).setAngle(90);
 //                camera.moveRight(move);
-                camera.translateCamera(move, 0f, 0f);
-                objects.get(1).translateObject(move, 0f, 0f);
+//                camera.translateCamera(move, 0f, 0f);
+//                objects.get(1).translateObject(move, 0f, 0f);
+                camera.moveRight(move);
 //                if (!collideTable(x + 0.1f, y, z)) move_right();
             }
 
