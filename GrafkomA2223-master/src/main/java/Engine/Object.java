@@ -112,7 +112,7 @@ public class Object extends ShaderProgram{
                 Utils.listoFloat(verticesColor),
                 GL_STATIC_DRAW);
     }
-    public void drawSetup(Camera camera, Projection projection){
+    public void drawSetup(Camera camera, Projection projection, Vector3f ambientStrength){
         bind();
         uniformsMap.setUniform(
                 "uni_color", color);
@@ -131,7 +131,7 @@ public class Object extends ShaderProgram{
                 0, 0);
 
     }
-    public void drawSetupWithVerticesColor(Camera camera, Projection projection){
+    public void drawSetupWithVerticesColor(Camera camera, Projection projection, Vector3f ambientStrength){
         bind();
         uniformsMap.setUniform(
                 "model", model);
@@ -155,8 +155,8 @@ public class Object extends ShaderProgram{
                 false,
                 0, 0);
     }
-    public void draw(Camera camera, Projection projection){
-        drawSetup(camera, projection);
+    public void draw(Camera camera, Projection projection, Vector3f ambientStrength){
+        drawSetup(camera, projection, ambientStrength);
         // Draw the vertices
         //optional
         glLineWidth(10); //ketebalan garis
@@ -172,11 +172,11 @@ public class Object extends ShaderProgram{
                 0,
                 vertices.size());
         for(Object child:childObject){
-            child.draw(camera, projection);
+            child.draw(camera, projection, ambientStrength);
         }
     }
-    public void drawWithVerticesColor(Camera camera, Projection projection){
-        drawSetupWithVerticesColor(camera, projection);
+    public void drawWithVerticesColor(Camera camera, Projection projection , Vector3f ambientStrength){
+        drawSetupWithVerticesColor(camera, projection, ambientStrength);
         // Draw the vertices
         //optional
         glLineWidth(10); //ketebalan garis
@@ -195,8 +195,10 @@ public class Object extends ShaderProgram{
     public Vector3f getVertices(int index) {
         return this.vertices.get(index);
     }
-    public void drawLine(Camera camera, Projection projection){
-        drawSetup(camera, projection);
+    public List<Vector3f> getAllVertices(){return  this.vertices;}
+
+    public void drawLine(Camera camera, Projection projection, Vector3f ambientStrength){
+        drawSetup(camera, projection, ambientStrength);
         // Draw the vertices
         //optional
         glLineWidth(3); //ketebalan garis
