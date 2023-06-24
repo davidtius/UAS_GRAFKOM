@@ -5,11 +5,13 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//import static org.lwjgl.util.glu.GLU.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL30.*;
@@ -27,18 +29,15 @@ public class Main {
     Camera camera = new Camera();
     String legDirection = "front";
     int countDegree = 0;
-    boolean isVentOpened = false;
-    boolean isVented = false;
-    boolean isVenting = false;
-    Object ventSrc, ventDest;
+    boolean blackout = false;
     float move = .02f;
-    Vector3f ambientStrength = new Vector3f(0.5f, 0.5f, 0.5f);
+    double lastPressed = 0;
+    // Vector3f ambientStrength = new Vector3f(0.5f, 0.5f, 0.5f);
 
     public void init(){
         window.init();
         GL.createCapabilities();
         mouseInput = window.getMouseInput();
-        camera.setPosition(4.7f, 0.1f, -3.3f);
 //        camera.setRotation((float) Math.toRadians(0f), (float) Math.toRadians(30f));
         objects.add(new Sphere("Blend",Arrays.asList(
                 new ShaderProgram.ShaderModuleData("resources/shaders/shaderBaru.vert", GL_VERTEX_SHADER),
@@ -55,85 +54,37 @@ public class Main {
                 180f
         ));
 
+        List<Vector3f> temp = new ArrayList<>(objects.get(0).getAllVertices());
+         for (int i = 0; i < temp.size(); i++){
+             if (temp.get(i).get(1) < 0f){
+                 temp.remove(i);
+             }
+         }
+         this.brute = new ArrayList<>(temp);
+
+        objects.add(new Sphere("player",Arrays.asList(
+                new ShaderProgram.ShaderModuleData("resources/shaders/shaderBaru.vert", GL_VERTEX_SHADER),
+                new ShaderProgram.ShaderModuleData("resources/shaders/shaderBaru.frag", GL_FRAGMENT_SHADER)
+        ),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                Arrays.asList(0f, 0f, 0f),
+                0.2f,
+                0.05f,
+                0.2f,
+                360,
+                180,
+                180f
+        ));
+        objects.get(1).translateObject(0f, -0.57f, 0f);
+        objects.get(1).scaleObject(0.17f, 0.17f, 0.17f);
+        camera.setPosition(0, objects.get(1).getCenterPoint().get(1)+0.4f, objects.get(1).getCenterPoint().get(2)+0.5f);
     }
 
-
+    List<Vector3f> brute;
     boolean cekscan = false;
     boolean scannow = true;
     boolean scanning = false;
-    public void shoot() {
-        if (objectPeluru.size()== 0) {
-            objectPeluru.add(new Sphere("sphere",
-                    Arrays.asList(
-                            new ShaderProgram.ShaderModuleData("resources/shaders/sceneWithVerticesColor.vert", GL_VERTEX_SHADER),
-                            new ShaderProgram.ShaderModuleData("resources/shaders/sceneWithVerticesColor.frag", GL_FRAGMENT_SHADER)
-                    ),
-                    new ArrayList<>(),
-                    new Vector4f(1.0f,.0f,0.0f,1.0f),
-                    Arrays.asList(0.0f,0.0f,0.0f),
-                    0.01f,
-                    0.01f,
-                    0.01f,
-                    108,
-                    72,
-                    180f
-            ));
-            objectPeluru.get(0).translateObject (
-
-                    objects.get(0).getChildObject().get(4).getChildObject().get(1).getCenterPoint().get(0),
-                    objects.get(0).getChildObject().get(4).getChildObject().get(1).getCenterPoint().get(1),
-                    objects.get(0).getChildObject().get(4).getChildObject().get(1).getCenterPoint().get(2));
-        }
-
-//        System.out.println(objects.get(0).getChildObject().get(4).getChildObject().get(1).getCenterPoint());
-//        System.out.println(objectPeluru.get(0).getCenterPoint());
-//
-//        System.out.println(statusBody);
-        switch (statusBody) {
-            case "depan":
-                objectPeluru.get(0).translateObject(0.15f,-0.065f,-0.1f);
-                while(objectPeluru.get(0).getCenterPoint().get(2)>= -2.5f) {
-//                    System.out.println("tes");
-                    objectPeluru.get(0).draw(camera,projection, ambientStrength);
-                    objectPeluru.get(0).translateObject(0f,0f,-0.01f);
-                }
-                objectPeluru.remove(0);
-                break;
-
-            case "belakang":
-                objectPeluru.get(0).translateObject(-0.15f,-0.06f,0.0f);
-                while(objectPeluru.get(0).getCenterPoint().get(2)<= 2.5f) {
-//                    System.out.println("tes");
-                    objectPeluru.get(0).draw(camera,projection, ambientStrength);
-                    objectPeluru.get(0).translateObject(0f,0f,0.01f);
-                }
-                objectPeluru.remove(0);
-                break;
-
-            case "kiri":
-                objectPeluru.get(0).translateObject(-0.15f,-0.06f,0.0f);
-                while(objectPeluru.get(0).getCenterPoint().get(0)>= -2.5f) {
-//                    System.out.println("tes");
-                    objectPeluru.get(0).draw(camera,projection, ambientStrength);
-                    objectPeluru.get(0).translateObject(-0.01f,0f,0.0f);
-                }
-                objectPeluru.remove(0);
-                break;
-
-            case "kanan":
-                objectPeluru.get(0).translateObject(0.15f,-0.06f,0.1f);
-                while(objectPeluru.get(0).getCenterPoint().get(0)<= 2.5f) {
-//                    System.out.println("tes");
-                    objectPeluru.get(0).draw(camera,projection, ambientStrength);
-                    objectPeluru.get(0).translateObject(0.01f,0f,0f);
-//                    System.out.println(objectPeluru.get(0).getCenterPoint());
-                }
-                objectPeluru.remove(0);
-                break;
-        }
-    }
-    
-    String currentColor = "red";
 
 //    public void renderObject(Object object) {
 //        Material material = object.getMaterial();
@@ -155,19 +106,15 @@ public class Main {
 //        //
 //    }
 
-    boolean collision_detection(){
-        float posx = camera.getPosition().get(0);
-        float posy = camera.getPosition().get(1);
-        float posz = camera.getPosition().get(2);
+    boolean collision_detection(float posx, float posy, float posz){
 
-        List<Vector3f> brute = objects.get(0).getAllVertices();
-
-        for(int i = 0; i < brute.size(); i++){
-            if (brute.get(i).get(2) < 0.08f) continue;
-
-            if (v3R(brute.get(i).get(0), brute.get(i).get(1), brute.get(i).get(2), posx, posy, posz) < 0.1f) return true;
-        }
-
+//        for(int i = 0; i < this.brute.size(); i++){
+//
+//            if (v3R(this.brute.get(i).get(0), this.brute.get(i).get(1), this.brute.get(i).get(2), posx, posy, posz) < 0.08f) {
+//                return true;
+//            }
+//        }
+//
         return false;
     }
         public void input(float x, float y, float z) {
@@ -175,12 +122,60 @@ public class Main {
 //            shoot();
 //        }
             Vector2f displayVec = window.getMouseInput().getDisplVec();
-            camera.addRotation((float)Math.toRadians(0f),
-                    (float)Math.toRadians(displayVec.y * 0.5f));
+
+            float ox = objects.get(1).getCenterPoint().get(0);
+            float oy = objects.get(1).getCenterPoint().get(1);
+            float oz = objects.get(1).getCenterPoint().get(2);
+            float cx = camera.getPosition().x;
+            float cy = camera.getPosition().y;
+            float cz = camera.getPosition().z;
+
+            // rotate object
+            objects.get(1).translateObject(-ox, -oy, -oz);
+            objects.get(1).rotateObject(-1*(float)Math.toRadians(displayVec.y * 0.25f), 0f,1f, 0f );
+            objects.get(1).translateObject(ox, oy, oz);
+
+             ox = objects.get(1).getCenterPoint().get(0);
+             oy = objects.get(1).getCenterPoint().get(1);
+             oz = objects.get(1).getCenterPoint().get(2);
+
+            //  System.out.println(objects.get(1).getCenterPoint());
+            // rotate camera
+            // camera.translateCddddddddddddddamera(-cx, -cy, -cz);
+            // glLoadIdentity();
+            glPushMatrix();
+            camera.getViewMatrix().lookAt(new Vector3f(cx, 0.25f, cz), new Vector3f(ox, oy, oz), new Vector3f(0, 1, 0));
+            glPopMatrix();
+            // Set up the view transformation
+            // glLoadMatrixf(camera.getViewMatrix().get(new float[16]));
+
+        //    glRotatef(-1*(float)Math.toRadians(displayVec.y * 0.25f), 0f,1f, 0f );
+        //     glTranslatef(cx,cy,cz);
+//            camera.move(-1*(float)Math.toRadians(displayVec.y * 0.25f), 0, 0);
+
+//            camera.translateCamera(-ox, -oy, -oz);
+//            camera.rotateCamera(-1*(float)Math.toRadians(displayVec.y * 0.25f), 0f,1f, 0f );
+//            camera.translateCamera(ox,oy+0.4f,oz+0.5f);
+
+//            camera.translateCamera(-0.01f, 0f, 0f);
+
+
 
         if(window.getMouseInput().getScroll().y != 0){
             projection.setFOV(projection.getFOV()- (window.getMouseInput().getScroll().y*0.01f));
             window.getMouseInput().setScroll(new Vector2f());
+        }
+
+
+        if (window.isKeyPressed(GLFW_KEY_E)) {
+            if (lastPressed == 0 || lastPressed + 1000 <= System.currentTimeMillis() / 1000) {
+                lastPressed = System.currentTimeMillis() / 1000;
+                blackout = !blackout;
+            }
+            // System.out.println(System.currentTimeMillis() / 1000);
+            // if (blackout)
+            // if window.isKeyReleased()
+            // blackout = !blackout;
         }
 
         if (window.isKeyPressed(GLFW_KEY_M)) {
@@ -254,64 +249,73 @@ public class Main {
 //        }
 
         if (window.isKeyPressed(GLFW_KEY_E)) {
-                if (scannow && cekscan && !isVenting) {
-                    scanning = true;
-                    scannow = false;
-                } else if (!isVenting && !scanning && !cekscan) {
-                    float jarak1 = v3R(
-                            objects.get(0).getCenterPoint().get(0),
-                            objects.get(0).getCenterPoint().get(1),
-                            objects.get(0).getCenterPoint().get(2),
-                            objects.get(4).getCenterPoint().get(0),
-                            objects.get(4).getCenterPoint().get(1),
-                            objects.get(4).getCenterPoint().get(2)
-                    );
-
-                    float jarak2 = v3R(
-                            objects.get(0).getCenterPoint().get(0),
-                            objects.get(0).getCenterPoint().get(1),
-                            objects.get(0).getCenterPoint().get(2),
-                            objects.get(5).getCenterPoint().get(0),
-                            objects.get(5).getCenterPoint().get(1),
-                            objects.get(5).getCenterPoint().get(2)
-                    );
-
-                    if (jarak1 <= 0.35f) {
-                        ventSrc = objects.get(4);
-                        ventDest = objects.get(5);
-                        isVenting = true;
-                    } else if (jarak2 <= 0.35f) {
-                        ventSrc = objects.get(5);
-                        ventDest = objects.get(4);
-                        isVenting = true;
-                    }
-                }
+//                if (scannow && cekscan && !isVenting) {
+//                    scanning = true;
+//                    scannow = false;
+//                } else if (!isVenting && !scanning && !cekscan) {
+//                    float jarak1 = v3R(
+//                            objects.get(0).getCenterPoint().get(0),
+//                            objects.get(0).getCenterPoint().get(1),
+//                            objects.get(0).getCenterPoint().get(2),
+//                            objects.get(4).getCenterPoint().get(0),
+//                            objects.get(4).getCenterPoint().get(1),
+//                            objects.get(4).getCenterPoint().get(2)
+//                    );
+//
+//                    float jarak2 = v3R(
+//                            objects.get(0).getCenterPoint().get(0),
+//                            objects.get(0).getCenterPoint().get(1),
+//                            objects.get(0).getCenterPoint().get(2),
+//                            objects.get(5).getCenterPoint().get(0),
+//                            objects.get(5).getCenterPoint().get(1),
+//                            objects.get(5).getCenterPoint().get(2)
+//                    );
+//
+//                    if (jarak1 <= 0.35f) {
+//                        ventSrc = objects.get(4);
+//                        ventDest = objects.get(5);
+//                        isVenting = true;
+//                    } else if (jarak2 <= 0.35f) {
+//                        ventSrc = objects.get(5);
+//                        ventDest = objects.get(4);
+//                        isVenting = true;
+//                    }
+//                }
             }
 
-            if (window.isKeyPressed(GLFW_KEY_W) && !scanning && !isVenting && (z > -2.3f) && !collision_detection()) {
+            float posx = camera.getPosition().get(0);
+            float posy = camera.getPosition().get(1);
+            float posz = camera.getPosition().get(2);
+
+            if (window.isKeyPressed(GLFW_KEY_W) && !scanning && (z > -2.3f) && !collision_detection(posx, posy, posz-0.05f)) {
 //                objects.get(0).setAngle(180f);
-                camera.moveForward(move);
+                camera.translateCamera(0f, 0f, -move);
+                objects.get(1).translateObject(0f, 0f, -1*move);
 //                if (!collideTable(x, y, z - 0.1f)) move_forward();
             }
 
 
-            if (window.isKeyPressed(GLFW_KEY_S) && !scanning && !isVenting && (z < 2.3f) && !collision_detection()) {
+            if (window.isKeyPressed(GLFW_KEY_S) && !scanning  && (z < 2.3f) && !collision_detection(posx, posy, posz+0.05f)) {
 //                objects.get(0).setAngle(0f);
-                camera.moveBackwards(move);
+                camera.translateCamera(0f, 0f, move);
 //                if (!collideTable(x, y, z + 0.1f)) move_backward();
+                objects.get(1).translateObject(0f, 0f, move);
             }
 
 
-            if (window.isKeyPressed(GLFW_KEY_A) && !scanning && !isVenting && (x > -2.3f) && !collision_detection()) {
+            if (window.isKeyPressed(GLFW_KEY_A) && !scanning  && (x > -2.3f) && !collision_detection(posx-0.05f, posy, posz)) {
 //                objects.get(0).setAngle(270);
-                camera.moveLeft(move);
+                camera.translateCamera(-move, 0f, 0f);
 //                if (!collideTable(x - 0.1f, y, z)) move_left();
+                objects.get(1).translateObject(-1*move, 0f, 0f);
             }
 
 
-            if (window.isKeyPressed(GLFW_KEY_D) && !scanning && !isVenting && (x < 2.3f) && !collision_detection()) {
+            if (window.isKeyPressed(GLFW_KEY_D) && !scanning  && (x < 2.3f) && !collision_detection(posx + 0.05f, posy, posz)) {
 //                objects.get(0).setAngle(90);
-                camera.moveRight(move);
+//                camera.moveRight(move);
+                camera.translateCamera(move, 0f, 0f);
+                objects.get(1).translateObject(move, 0f, 0f);
 //                if (!collideTable(x + 0.1f, y, z)) move_right();
             }
 
@@ -332,7 +336,7 @@ public class Main {
                 camera.moveLeft(0.035f);
             }
 
-            if (window.isKeyPressed(GLFW_KEY_SPACE) && !scanning && !isVenting) {
+            if (window.isKeyPressed(GLFW_KEY_SPACE) && !scanning ) {
                 jumping = true;
             }
     }
@@ -642,69 +646,6 @@ public class Main {
         camera.moveDown(move - 0.01f);
     }
 
-    public void vent(Object src, Object dest) {
-        if (objects.get(0).getCenterPoint().get(0) <= src.getCenterPoint().get(0) + 0.25f &&
-                objects.get(0).getCenterPoint().get(0) >= src.getCenterPoint().get(0) - 0.25f &&
-                objects.get(0).getCenterPoint().get(2) <= src.getCenterPoint().get(2) + 0.25f &&
-                objects.get(0).getCenterPoint().get(2) >= src.getCenterPoint().get(2) - 0.25f
-        )
-        {
-            // open vent
-            if (!isVentOpened) {
-                openVent(objects.get(4), new Vector3f(-1f, -0.25f, 0f));
-                openVent(objects.get(5), new Vector3f(0.7f, -0.25f, 0f));
-            }
-
-            // vent opened
-            if (openVent(objects.get(4), new Vector3f(-1f, -0.25f, 0f)) && openVent(objects.get(5), new Vector3f(0.7f, -0.25f, 0f))) {
-                isVentOpened = true;
-
-                // character animation
-                objects.get(0).translateObject(0f,-.02f,0f); // animasi turun
-
-                if (objects.get(0).getCenterPoint().get(1) <= -0.5f && !isVented) {
-                    System.out.println("vented!");
-                    // teleport character
-                    objects.get(0).translateObject(
-                            dest.getCenterPoint().get(0) - src.getCenterPoint().get(0),
-                            dest.getCenterPoint().get(1) - src.getCenterPoint().get(1),
-                            dest.getCenterPoint().get(2) - src.getCenterPoint().get(2)
-                    );
-                    // change camera position
-                    Vector3f temp = camera.getPosition();
-                    camera.setPosition(dest.getCenterPoint().get(0), temp.y, temp.z);
-                    isVented = true;
-                }
-            }
-        }
-
-        if (objects.get(0).getCenterPoint().get(0) <= dest.getCenterPoint().get(0) + 0.25f &&
-                objects.get(0).getCenterPoint().get(0) >= dest.getCenterPoint().get(0) - 0.25f &&
-                objects.get(0).getCenterPoint().get(2) <= dest.getCenterPoint().get(2) + 0.25f &&
-                objects.get(0).getCenterPoint().get(2) >= dest.getCenterPoint().get(2) - 0.25f
-        )
-        {
-            // close vent
-            if (isVentOpened && objects.get(0).getCenterPoint().get(1) >= 0f) {
-                closeVent(objects.get(4), new Vector3f(-1f, -0.25f, 0f),0.15f);
-                closeVent(objects.get(5), new Vector3f(0.7f, -0.25f, 0f),0.15f);
-
-                // vent closed
-                if  (closeVent(objects.get(4), new Vector3f(-1f, -0.25f, 0f),0.15f) && closeVent(objects.get(5), new Vector3f(0.7f, -0.25f, 0f),0.15f)) {
-                    isVentOpened = false;
-                    isVented = false;
-                    isVenting = false;
-                }
-            }
-
-            // character animation
-            if (isVented && isVentOpened) {
-                if (objects.get(0).getCenterPoint().get(1) <= 0f)
-                    objects.get(0).translateObject(0f, .02f, 0f); // animasi naik
-            }
-        }
-    }
-
     public boolean closeVent(Object vent, Vector3f engsel, float offSetX) {
         if (vent.getCenterPoint().get(0) <= engsel.x + offSetX) {
             vent.translateObject(
@@ -773,7 +714,10 @@ public class Main {
 //    }
 
     public void loop(){
+
         while (window.isOpen()) {
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
             window.update();
             glClearColor(0.0f,
                     0.0f, 0.0f,
@@ -787,7 +731,7 @@ public class Main {
 
             //code
             for(Object object: objects){
-                object.drawWithVerticesColor(camera, projection, ambientStrength);
+                object.drawWithVerticesColor(camera, projection, blackout);
             }
 
 

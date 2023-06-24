@@ -131,7 +131,7 @@ public class Object extends ShaderProgram{
                 0, 0);
 
     }
-    public void drawSetupWithVerticesColor(Camera camera, Projection projection, Vector3f ambientStrength){
+    public void drawSetupWithVerticesColor(Camera camera, Projection projection, boolean blackout){
         bind();
         uniformsMap.setUniform(
                 "model", model);
@@ -175,8 +175,8 @@ public class Object extends ShaderProgram{
             child.draw(camera, projection, ambientStrength);
         }
     }
-    public void drawWithVerticesColor(Camera camera, Projection projection , Vector3f ambientStrength){
-        drawSetupWithVerticesColor(camera, projection, ambientStrength);
+    public void drawWithVerticesColor(Camera camera, Projection projection, boolean blackout){
+        drawSetupWithVerticesColor(camera, projection, blackout);
         // Draw the vertices
         //optional
         glLineWidth(10); //ketebalan garis

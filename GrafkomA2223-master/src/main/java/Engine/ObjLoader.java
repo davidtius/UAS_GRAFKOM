@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ObjLoader {
-    public static  Model loadModel(File f) throws FileNotFoundException, IOException {
-        List<Material> materials = loadMTLFile("src/main/java/Engine/map.mtl");
+    public static  Model loadModel(File f, String mtlPath) throws FileNotFoundException, IOException {
+        List<Material> materials = loadMTLFile(mtlPath);
         Material currentMaterial = materials.get(0);
 
         BufferedReader reader = new BufferedReader(new FileReader(f));
@@ -41,12 +41,6 @@ public class ObjLoader {
                 float z = Float.parseFloat(line.split("\\s+")[3]);
                 m.normals.add(new Vector3f(x,y,z));
             }
-            else if(line.startsWith("vt "))
-            {
-                float x = Float.parseFloat(line.split("\\s+")[1]);
-                float y = Float.parseFloat(line.split("\\s+")[2]);
-                m.textures.add(new Vector2f(x, y));
-            }
             else if(line.startsWith("f "))
             {
                 Vector3f vertexIndices = new Vector3f
@@ -61,19 +55,8 @@ public class ObjLoader {
                                 Float.parseFloat(line.split("\\s+")[2].split("/")[2]), // Y
                                 Float.parseFloat(line.split("\\s+")[3].split("/")[2])  // Z
                         );
-                Vector3f textureIndices = new Vector3f
-                        (
-                                Float.parseFloat(line.split("\\s+")[1].split("/")[1]), // X
-                                Float.parseFloat(line.split("\\s+")[2].split("/")[1]), // Y
-                                Float.parseFloat(line.split("\\s+")[3].split("/")[1])  // Z
-                        );
-                m.faces.add(new Face(vertexIndices, normalIndices, textureIndices, currentMaterial.getDiffuseColor()));
-            }
-            else if(line.startsWith("l "))
-            {
-                float x = Float.parseFloat(line.split("\\s+")[1]);
-                float y = Float.parseFloat(line.split("\\s+")[2]);
-                m.lineTextures.add(new Vector2f(x, y));
+                System.out.println(currentMaterial.getName());
+                m.faces.add(new Face(vertexIndices, normalIndices, currentMaterial.getDiffuseColor()));
             }
             else if(line.startsWith("usemtl ")) {
                 String temp = line.substring(7).trim();
@@ -110,7 +93,6 @@ public class ObjLoader {
                 if (tokens[0].equals("newmtl")) {
                     // Start of a new material
                     currentMaterial = new Material();
-//                    System.out.println(currentMaterial);
                     currentMaterial.setName(tokens[1]);
                     currentMaterial.setAmbientColor(new Vector3f(1f, 1f, 1f));
                     materials.add(currentMaterial);
@@ -119,35 +101,14 @@ public class ObjLoader {
                     float r = Float.parseFloat(tokens[1]);
                     float g = Float.parseFloat(tokens[2]);
                     float b = Float.parseFloat(tokens[3]);
-//                    System.out.println(new Vector3f(r, g, b));
                     currentMaterial.setDiffuseColor(new Vector3f(r, g, b));
                 } else if (tokens[0].equals("Ks")) {
                     // Specular color
                     float r = Float.parseFloat(tokens[1]);
                     float g = Float.parseFloat(tokens[2]);
                     float b = Float.parseFloat(tokens[3]);
-//                    System.out.println(new Vector3f(r, g, b));
                     currentMaterial.setSpecularColor(new Vector3f(r, g, b));
                 }
-//                else if (tokens[0].equals("map_Kd")) {
-//                    currentMaterial.setDiffuseMapPath(tokens[1]);
-//                }
-//                else if (tokens[0].equals("map_Ke")) {
-//                    currentMaterial.setEmissiveMapPath(tokens[1]);
-//                }
-//                else if (tokens[0].equals("map_d")) {
-//                    currentMaterial.setOpacityMapPath(tokens[1]);
-//                }
-//                else if (tokens[0].equals("map_Ks")) {
-//                    currentMaterial.setMapKsPath(tokens[1]);
-//                } else if (tokens[0].equals("map_Ns")) {
-//                    currentMaterial.setMapNsPath(tokens[1]);
-//                } else if (tokens[0].equals("map_Refl")) {
-//                    currentMaterial.setMapReflPath(tokens[1]);
-//                } else if (tokens[0].equals("map_Bump") || tokens[0].equals("bump")) {
-//                    currentMaterial.setMapBumpPath(tokens[3]);
-//                }
-                // Handle other material properties such as textures, shininess, etc.
             }
         } catch (IOException e) {
             e.printStackTrace();

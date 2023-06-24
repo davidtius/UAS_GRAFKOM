@@ -2,8 +2,6 @@ package Engine;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,18 +14,15 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class Sphere extends Circle{
     float radiusZ;
     int stackCount;
     int sectorCount;
     List<Vector3f> normal;
-    List<Vector3f> textures = new ArrayList<>();
     float angle;
     int nbo;
     int nboColor;
-    int textCoords;
     Model m;
     List<Material> material;
 
@@ -53,7 +48,7 @@ public class Sphere extends Circle{
             case "gun" : gun(); break;
             case "knife" : knife();break;
             case "button" : button();break;
-            case "Blend" : loadObject();break;
+            case "Blend" : loadMap();break;
         }
         setupVAOVBO();
     }
@@ -81,18 +76,18 @@ public class Sphere extends Circle{
             case "gun" : gun(); break;
             case "knife" : knife();break;
             case "button" : button();break;
-            case "Blend" : loadObject();break;
+            case "Blend" : loadMap();break;
+            case "player" : loadPlayer(); break;
         }
         setupVAOVBOWithVerticesColor();
     }
-    public void loadObject() {
+
+    public void loadPlayer() {
         vertices.clear();
-//        Vector3f temp = new Vector3f();
-//        ArrayList<Vector3f> tempVertices = new ArrayList<>();
 
         try {
-            m = ObjLoader.loadModel(new File("src/main/java/Engine/map.obj"));
-            material = ObjLoader.loadMTLFile("src/main/java/Engine/map.mtl");
+            m = ObjLoader.loadModel(new File("src/main/java/amongus.obj"), "src/main/java/amongus.mtl");
+            // material = ObjLoader.loadMTLFile("src/main/java/amongus.mtl");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -104,132 +99,58 @@ public class Sphere extends Circle{
             normal.add(n1);
             Vector3f v1 = m.vertices.get((int) face.vertex.x-1);
             vertices.add(v1);
-//            Vector3f t1 = new Vector3f(m.textures.get((int) face.texture.x-1), 0f);
-//            textures.add(t1);
             verticesColor.add(face.color);
 
             Vector3f n2 = m.normals.get((int) face.normal.y-1);
             normal.add(n2);
             Vector3f v2 = m.vertices.get((int) face.vertex.y-1);
             vertices.add(v2);
-//            Vector3f t2 = new Vector3f(m.textures.get((int) face.texture.y-1), 0f);
-//            textures.add(t2);
             verticesColor.add(face.color);
 
             Vector3f n3 = m.normals.get((int) face.normal.z-1);
             normal.add(n3);
             Vector3f v3 = m.vertices.get((int) face.vertex.z-1);
             vertices.add(v3);
-//            Vector3f t3 = new Vector3f(m.textures.get((int) face.texture.z-1), 0f);
-//            textures.add(t3);
             verticesColor.add(face.color);
         }
 
-//        System.out.println(verticesColor);
-
-//        for (Material material : material) {
-//            if (material.getDiffuseMapPath() != null) {
-//                try {
-//                    Texture mapKd = new Texture(material.getDiffuseMapPath());
-////                    System.out.println();
-//                    System.out.println(mapKd.getWidth());
-//                    // Bind and activate the texture using OpenGL
-//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKd.getTextureId());
-//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKd.getTextureId());
-//                    // Set additional texture parameters if needed
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            if (material.getEmissiveMapPath() != null) {
-//                try {
-//                    Texture mapKe = new Texture(material.getEmissiveMapPath());
-////                    System.out.println();
-//                    System.out.println(mapKe.getWidth());
-//                    // Bind and activate the texture using OpenGL
-//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKe.getTextureId());
-//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKe.getTextureId());
-//                    // Set additional texture parameters if needed
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            if (material.getOpacityMapPath() != null) {
-//                try {
-//                    Texture mapd = new Texture(material.getOpacityMapPath());
-////                    System.out.println();
-//                    System.out.println(mapd.getWidth());
-//                    // Bind and activate the texture using OpenGL
-//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapd.getTextureId());
-//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapd.getTextureId());
-//                    // Set additional texture parameters if needed
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            if (material.getMapKsPath() != null) {
-//                try {
-//                    Texture mapKs = new Texture(material.getMapKsPath());
-////                    System.out.println();
-//                    System.out.println(mapKs.getWidth());
-//                    // Bind and activate the texture using OpenGL
-//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapKs.getTextureId());
-//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapKs.getTextureId());
-//                    // Set additional texture parameters if needed
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            if (material.getMapNsPath() != null) {
-//                try {
-//                    Texture mapNs = new Texture(material.getMapNsPath());
-//                    // Bind and activate the texture using OpenGL
-//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapNs.getTextureId());
-//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapNs.getTextureId());
-//                    // Set additional texture parameters if needed
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            if (material.getMapReflPath() != null) {
-//                try {
-//                    Texture mapRefl = new Texture(material.getMapReflPath());
-//                    // Bind and activate the texture using OpenGL
-//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapRefl.getTextureId());
-//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapRefl.getTextureId());
-//                    // Set additional texture parameters if needed
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            if (material.getMapBumpPath() != null) {
-//                try {
-//                    Texture mapBump = new Texture(material.getMapBumpPath());
-//                    // Bind and activate the texture using OpenGL
-//                    GL13.glActiveTexture(GL13.GL_TEXTURE0 + mapBump.getTextureId());
-//                    GL11.glBindTexture(GL11.GL_TEXTURE_2D, mapBump.getTextureId());
-//                    // Set additional texture parameters if needed
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            // Render the object using OpenGL commands
-//            // ...
-////            GL13.glActiveTexture(GL13.GL_TEXTURE0 + textureUnit);
-////            GL11.glBindTexture(GL11.GL_TEXTURE_2D, textures.getTextureId());
-////             Unbind the textures after rendering
-////            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-//        }
-
-
+        // System.out.println(verticesColor);
     }
+    public void loadMap() {
+        vertices.clear();
+//        Vector3f temp = new Vector3f();
+//        ArrayList<Vector3f> tempVertices = new ArrayList<>();
+
+        try {
+            m = ObjLoader.loadModel(new File("src/main/java/Engine/map.obj"), "src/main/java/Engine/map.mtl");
+            // material = ObjLoader.loadMTLFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        m.getSize();
+        normal = new ArrayList<>();
+        for(Face face : m.faces){
+            Vector3f n1 = m.normals.get((int) face.normal.x-1);
+            normal.add(n1);
+            Vector3f v1 = m.vertices.get((int) face.vertex.x-1);
+            vertices.add(v1);
+            verticesColor.add(face.color);
+
+            Vector3f n2 = m.normals.get((int) face.normal.y-1);
+            normal.add(n2);
+            Vector3f v2 = m.vertices.get((int) face.vertex.y-1);
+            vertices.add(v2);
+            verticesColor.add(face.color);
+
+            Vector3f n3 = m.normals.get((int) face.normal.z-1);
+            normal.add(n3);
+            Vector3f v3 = m.vertices.get((int) face.vertex.z-1);
+            vertices.add(v3);
+            verticesColor.add(face.color);
+        }
+    }
+
     public void setupVAOVBO() {
         super.setupVAOVBO();
         nbo = glGenBuffers();
@@ -275,8 +196,8 @@ public class Sphere extends Circle{
         uniformsMap.setUniform("viewPos",camera.getPosition());
     }
 
-    public void drawSetupWithVerticesColor(Camera camera, Projection projection, Vector3f ambientStrength){
-        super.drawSetupWithVerticesColor(camera, projection, ambientStrength);
+    public void drawSetupWithVerticesColor(Camera camera, Projection projection, boolean blackout){
+        super.drawSetupWithVerticesColor(camera, projection, blackout);
 
         glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, nboColor);
@@ -303,42 +224,162 @@ public class Sphere extends Circle{
         // uniformsMap.setUniform("lightPos",new Vector3f(1.0f,1.0f,0.0f));
         // uniformsMap.setUniform("viewPos",camera.getPosition());
 
-        //directional Light
-        uniformsMap.setUniform("dirLight.direction", new Vector3f(-0.2f,-1.0f,-0.3f));
-        uniformsMap.setUniform("dirLight.ambient", ambientStrength);
-        uniformsMap.setUniform("dirLight.diffuse", new Vector3f(0.4f,0.4f,0.4f));
-        uniformsMap.setUniform("dirLight.specular", new Vector3f(0.5f,0.5f,0.5f));
-        //posisi pointLight
-        Vector3f[] _pointLightPositions = {
-            new Vector3f(0.7f, 0.2f, 2.0f),
-            new Vector3f(2.3f, -3.3f, -4.0f),
-            new Vector3f(-4.0f, 2.0f, -12.0f),
-            new Vector3f(0.0f, 0.0f, -3.0f)
-            };
-        for(int i = 0;i< _pointLightPositions.length;i++){
-            uniformsMap.setUniform("pointLights["+ i +"].position",_pointLightPositions[i]);
-            uniformsMap.setUniform("pointLights["+ i +"].ambient", new Vector3f(0.05f,0.05f,0.05f));
-            uniformsMap.setUniform("pointLights["+ i +"].diffuse", new Vector3f(0.8f,0.8f,0.8f));
-            uniformsMap.setUniform("pointLights["+ i +"].specular", new Vector3f(1.0f,1.0f,1.0f));
-            uniformsMap.setUniform("pointLights["+ i +"].constant",1.0f );
-            uniformsMap.setUniform("pointLights["+ i +"].linear", 0.09f);
-            uniformsMap.setUniform("pointLights["+ i +"].quadratic", 0.032f);
+        Vector3f[] hallLights = {
+                    // hall atas
+                    new Vector3f(-3.5f, 0.25f, -1.5f),
+                    new Vector3f(-5.05f, 0.25f, -1.5f),
+                    new Vector3f(-6.6f, 0.25f, -1.5f),
+                    new Vector3f(-8f, 0.25f, -1.5f),
+                    new Vector3f(-9.15f, 0.25f, -1.9f),
+                    new Vector3f(-10.25f, 0.25f, -1.9f),
 
+                    new Vector3f(-3.5f, 0.25f, -0.7f),
+                    new Vector3f(-4.35f, 0.25f, -0.7f),
+                    new Vector3f(-5.4f, 0.25f, -0.7f),
+                    new Vector3f(-6.6f, 0.25f, -0.7f),
+                    new Vector3f(-8f, 0.25f, -0.7f),
+                    new Vector3f(-8.85f, 0.25f, 0.57f),
+                    new Vector3f(-10.55f, 0.25f, 0.57f),
+
+                    // hall kiri
+                    new Vector3f(-9.75f, 0.25f, 1.05f),
+                    new Vector3f(-9.75f, 0.25f, 2.15f),
+                    new Vector3f(-9.75f, 0.25f, 3.6f),
+                    new Vector3f(-9.75f, 0.25f, 4.75f),
+                    new Vector3f(-9.75f, 0.25f, 5.8f),
+                    new Vector3f(-9.75f, 0.25f, 6.75f),
+
+                    new Vector3f(-9.3f, 0.25f, 1.05f),
+                    new Vector3f(-9.3f, 0.25f, 2.15f),
+                    new Vector3f(-9.3f, 0.25f, 3.6f),
+                    new Vector3f(-9.3f, 0.25f, 4.75f),
+                    new Vector3f(-8.5f, 0.25f, 5.55f),
+
+                    // hall bawah
+                    new Vector3f(-9.3f, 0.25f, 7f),
+                    new Vector3f(-8.5f, 0.25f, 7f),
+                    new Vector3f(-7.75f, 0.25f, 7f),
+                    new Vector3f(-7.45f, 0.25f, 6.25f),
+                    new Vector3f(-6.5f, 0.25f, 6.5f),
+                    new Vector3f(-6.5f, 0.25f, 7.5f),
+                    new Vector3f(-7.05f, 0.25f, 7.6f),
+                    new Vector3f(-7.05f, 0.25f, 8.65f),
+
+                    new Vector3f(-6.35f, 0.25f, 8.9f),
+                    new Vector3f(-5.1f, 0.25f, 8.9f),
+                    new Vector3f(-3.55f, 0.25f, 8.9f),
+                    new Vector3f(-6f, 0.25f, 7.9f),
+                    new Vector3f(-4.5f, 0.25f, 7.9f),
+                    new Vector3f(-2.85f, 0.25f, 7.9f),
+
+                    // storage room
+                    new Vector3f(-2.1f, 0.25f, 9.6f),
+                    new Vector3f(-1.5f, 0.25f, 10f),
+                    new Vector3f(-0.75f, 0.25f, 10.15f),
+                    new Vector3f(0.25f, 0.25f, 10.15f),
+                    new Vector3f(0.75f, 0.25f, 9.25f),
+                    new Vector3f(0.75f, 0.25f, 8.25f),
+                    new Vector3f(0.75f, 0.25f, 7.25f),
+                    new Vector3f(0.75f, 0.25f, 6.25f),
+                    new Vector3f(0.75f, 0.25f, 5.25f),
+                    new Vector3f(-2.35f, 0.25f, 7.25f),
+                    new Vector3f(-2.35f, 0.25f, 6.15f),
+                    new Vector3f(-0.95f, 0.25f, 5f),
+
+                    // mid connector
+                    new Vector3f(-0.3f, 0.25f, 4.45f),
+                    new Vector3f(-0.3f, 0.25f, 2.8f),
+                    new Vector3f(0.3f, 0.25f, 4.45f),
+                    new Vector3f(0.3f, 0.25f, 2.8f),
+            };
+
+            Vector3f[] monitorLights = {
+                    new Vector3f(-7.3f, 0.3f, 1.25f),
+                    new Vector3f(0.010217f, 0.041753f, 0.800000f),
+                    new Vector3f(-3.15f, 0.25f, 2.15f),
+                    new Vector3f(0.355600f, 0.800000f, 0.424038f),
+            };
+
+        if (!blackout) {
+            //directional Light
+            uniformsMap.setUniform("dirLight.direction", new Vector3f(0f, 3f, 0f));
+            uniformsMap.setUniform("dirLight.ambient", new Vector3f(.5f, .5f, .5f));
+            uniformsMap.setUniform("dirLight.diffuse", new Vector3f(0.8f, 0.8f, 0.8f));
+            uniformsMap.setUniform("dirLight.specular", new Vector3f(1.0f, 1.0f, 1.0f));
+
+            for (int i = 0; i < hallLights.length; i++) {
+                uniformsMap.setUniform("pointLights[" + i + "].position", hallLights[i]);
+                uniformsMap.setUniform("pointLights[" + i + "].ambient", new Vector3f(-0.35f, -0.35f, -0.35f));
+                uniformsMap.setUniform("pointLights[" + i + "].diffuse", new Vector3f(1f, 1f, 1f));
+                uniformsMap.setUniform("pointLights[" + i + "].specular", new Vector3f(0.5f, 0.5f, 0.5f));
+                uniformsMap.setUniform("pointLights[" + i + "].constant", 1.0f);
+                uniformsMap.setUniform("pointLights[" + i + "].linear", 0.7f);
+                uniformsMap.setUniform("pointLights[" + i + "].quadratic", 1.8f);
+            }
+
+            for (int i = 0; i < monitorLights.length; i+=2) {
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].position", monitorLights[i]);
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].ambient", new Vector3f(-0.5f, -0.5f, -0.5f));
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].diffuse", monitorLights[i+1]);
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].specular", new Vector3f(1f, 1f, 1f));
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].constant", 1.0f);
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].linear", 0.7f);
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].quadratic", 1.8f);
+            }
+            // no spotlight
+            uniformsMap.setUniform("spotLight.position", camera.getPosition());
+            uniformsMap.setUniform("spotLight.direction", camera.getDirection());
+            uniformsMap.setUniform("spotLight.ambient", new Vector3f(0.0f, 0.0f, 0.0f));
+            uniformsMap.setUniform("spotLight.diffuse", new Vector3f(0.0f, 0.0f, 0.0f));
+            uniformsMap.setUniform("spotLight.specular", new Vector3f(0.0f, 0.0f, 0.0f));
+            uniformsMap.setUniform("spotLight.constant", 1.0f);
+            uniformsMap.setUniform("spotLight.linear", 0.00f);
+            uniformsMap.setUniform("spotLight.quadratic", 0.00f);
+            uniformsMap.setUniform("spotLight.cutOff", (float) Math.cos(Math.toRadians(20f)));
+            uniformsMap.setUniform("spotLight.outerCutOff", (float) Math.cos(Math.toRadians(21f)));
+
+            uniformsMap.setUniform("viewPos",camera.getPosition());
+            }
+
+        else {
+            //directional Light
+            uniformsMap.setUniform("dirLight.direction", new Vector3f(0f, 3f, 0f));
+            uniformsMap.setUniform("dirLight.ambient", new Vector3f(.1f, .1f, .1f));
+            uniformsMap.setUniform("dirLight.diffuse", new Vector3f(0.8f, 0.8f, 0.8f));
+            uniformsMap.setUniform("dirLight.specular", new Vector3f(1.0f, 1.0f, 1.0f));
+
+            for (int i = 0; i < hallLights.length; i++) {
+                uniformsMap.setUniform("pointLights[" + i + "].position", hallLights[i]);
+                uniformsMap.setUniform("pointLights[" + i + "].ambient", new Vector3f(0f, 0f, 0f));
+                uniformsMap.setUniform("pointLights[" + i + "].diffuse", new Vector3f(0f, 0f, 0f));
+                uniformsMap.setUniform("pointLights[" + i + "].specular", new Vector3f(0f, 0f, 0f));
+                uniformsMap.setUniform("pointLights[" + i + "].constant", 1.0f);
+                uniformsMap.setUniform("pointLights[" + i + "].linear", 0.7f);
+                uniformsMap.setUniform("pointLights[" + i + "].quadratic", 1.8f);
+            }
+
+            for (int i = 0; i < monitorLights.length; i+=2) {
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].position", monitorLights[i]);
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].ambient", new Vector3f(0f, 0f, 0f));
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].diffuse", new Vector3f(0f, 0f, 0f));
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].specular", new Vector3f(0f, 0f, 0f));
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].constant", 1.0f);
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].linear", 0.7f);
+                uniformsMap.setUniform("pointLights[" + (i/2+54) + "].quadratic", 1.8f);
+            }
+            // spotlight on
+            uniformsMap.setUniform("spotLight.position",camera.getPosition());
+            uniformsMap.setUniform("spotLight.direction",camera.getDirection());
+            uniformsMap.setUniform("spotLight.ambient",new Vector3f(.05f, .05f, .05f));
+            uniformsMap.setUniform("spotLight.diffuse",new Vector3f(1.0f,1.0f,1.0f));
+            uniformsMap.setUniform("spotLight.specular",new Vector3f(0.2f,0.2f,0.2f));
+            uniformsMap.setUniform("spotLight.constant",1.0f);
+            uniformsMap.setUniform("spotLight.linear",0.09f);
+            uniformsMap.setUniform("spotLight.quadratic",0.032f);
+            uniformsMap.setUniform("spotLight.cutOff",(float)Math.cos(Math.toRadians(20f)));
+            uniformsMap.setUniform("spotLight.outerCutOff",(float)Math.cos(Math.toRadians(22f)));
         }
 
-        //spotlight
-        uniformsMap.setUniform("spotLight.position",camera.getPosition());
-        uniformsMap.setUniform("spotLight.direction",camera.getDirection());
-        uniformsMap.setUniform("spotLight.ambient",new Vector3f(0.0f,0.0f,0.0f));
-        uniformsMap.setUniform("spotLight.diffuse",new Vector3f(1.0f,1.0f,1.0f));
-        uniformsMap.setUniform("spotLight.specular",new Vector3f(1.0f,1.0f,1.0f));
-        uniformsMap.setUniform("spotLight.constant",1.0f);
-        uniformsMap.setUniform("spotLight.linear",0.09f);
-        uniformsMap.setUniform("spotLight.quadratic",0.032f);
-        uniformsMap.setUniform("spotLight.cutOff",(float)Math.cos(Math.toRadians(12.5f)));
-        uniformsMap.setUniform("spotLight.outerCutOff",(float)Math.cos(Math.toRadians(12.5f)));
-
-        uniformsMap.setUniform("viewPos",camera.getPosition());
     }
     public void knife(){
         float x = centerPoint.get(0);
