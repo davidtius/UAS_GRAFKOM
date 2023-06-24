@@ -12,7 +12,7 @@ in vec4 out_color;
 void main()
 {
     // ambient
-    float ambientStrength = 1;
+    float ambientStrength = 0.5;
     vec3 ambient = ambientStrength * lightColor;
 
     // diffuse
@@ -29,3 +29,4 @@ void main()
     vec3 result = (ambient + diffuse + spec) * vec3(out_color);
     fragColor = vec4(result, 1.0);
 }
+
