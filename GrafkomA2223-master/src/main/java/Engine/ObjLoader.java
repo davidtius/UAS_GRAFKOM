@@ -1,14 +1,10 @@
 package Engine;
 
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ObjLoader {
     public static  Model loadModel(File f, String mtlPath) throws FileNotFoundException, IOException {
@@ -55,7 +51,7 @@ public class ObjLoader {
                                 Float.parseFloat(line.split("\\s+")[2].split("/")[2]), // Y
                                 Float.parseFloat(line.split("\\s+")[3].split("/")[2])  // Z
                         );
-                System.out.println(currentMaterial.getName());
+//                System.out.println(currentMaterial.getName());
                 m.faces.add(new Face(vertexIndices, normalIndices, currentMaterial.getDiffuseColor()));
             }
             else if(line.startsWith("usemtl ")) {

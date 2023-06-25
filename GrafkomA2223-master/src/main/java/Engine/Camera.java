@@ -33,7 +33,20 @@ public class Camera {
 
     public void addRotation(float x, float y) {
         rotation.add(x, y);
+
         recalculate();
+    }
+
+    public Vector2f getRotation() {
+        return rotation;
+    }
+
+    public Vector3f getRight() {
+        return right;
+    }
+
+    public Vector3f getUp() {
+        return up;
     }
 
     public Vector3f getPosition() {

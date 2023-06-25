@@ -16,21 +16,16 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 public class Object extends ShaderProgram{
-
     List<Vector3f> vertices;
     int vao;
     int vbo;
     UniformsMap uniformsMap;
     Vector4f color;
-
     List<Vector3f> verticesColor;
     Matrix4f model;
-
     int vboColor;
-
     List<Object> childObject;
     List<Float> centerPoint;
-    float angle;
 
     public List<Object> getChildObject() {
         return childObject;
@@ -53,17 +48,8 @@ public class Object extends ShaderProgram{
             , List<Vector3f> vertices
             , Vector4f color) {
         super(shaderModuleDataList);
-//        System.out.println("tes");
         this.vertices = vertices;
-//        setupVAOVBO();
         uniformsMap = new UniformsMap(getProgramId());
-//        uniformsMap = new UniformsMap(getProgramId());
-//        uniformsMap.createUniform(
-//                "uni_color");
-//        uniformsMap.createUniform(
-//                "model");
-//        uniformsMap.createUniform("projection");
-//        uniformsMap.createUniform("view");
         this.color = color;
         model = new Matrix4f().identity();
         childObject = new ArrayList<>();
@@ -232,28 +218,7 @@ public class Object extends ShaderProgram{
         centerPoint.set(0,destTemp.x);
         centerPoint.set(1,destTemp.y);
         centerPoint.set(2,destTemp.z);
-//        System.out.println(centerPoint.get(0));
     }
-
-    // Buat ganti arah objek pake WASD
-    public void setAngle(float angle) {
-
-        if (getAngle() != angle) {
-            Vector3f prevCenter = new Vector3f(centerPoint.get(0), centerPoint.get(1), centerPoint.get(2));
-            translateObject(-centerPoint.get(0), -centerPoint.get(1), -centerPoint.get(2));
-            rotateObject((float) Math.toRadians(angle - getAngle()), 0.0f, 1.0f, 0.0f);
-            translateObject(prevCenter.x, prevCenter.y, prevCenter.z);
-
-            this.angle = angle;
-            for (Object child : childObject)
-                child.angle = angle;
-        }
-    }
-
-    public float getAngle() {
-        return this.angle;
-    }
-
     public void scaleObject(Float scaleX,Float scaleY,Float scaleZ){
         model = new Matrix4f().scale(scaleX,scaleY,scaleZ).mul(new Matrix4f(model));
         updateCenterPoint();
