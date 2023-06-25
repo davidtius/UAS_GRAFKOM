@@ -47,6 +47,10 @@ public class Window {
         this.height = height;
     }
 
+    public long getWindow() {
+        return window;
+    }
+
     public boolean isOpen(){
         return open;
     }
