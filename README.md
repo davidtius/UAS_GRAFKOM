@@ -7,5 +7,5 @@ Anggota Kelompok:
 3. Jonathan Demario - C14210001
 
 ## Laporan
-
+https://docs.google.com/document/d/1lT7VIpZwVbPbNckGgi_lYDCO3U0uAkGR_sAbMIPpECI/edit?usp=sharing
 ## Video
