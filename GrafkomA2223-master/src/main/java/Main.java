@@ -383,8 +383,10 @@ public class Main {
                 180f
         ));
 
+
         objects.get(1).scaleObject(0.17f, 0.17f, 0.17f);
         objects.get(1).translateObject(this.res.get(0), -0.057f, this.res.get(2));
+
 
         dead = false;
     }
